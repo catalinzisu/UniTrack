@@ -8,6 +8,6 @@ export interface Subject {
   professorRating?: number;
   examRating?: number;
   examDate?: string;
-  materialUrl?: string;
+  materials?: { name: string; url: string }[];
   comment?: string;
 }

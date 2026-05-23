@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -52,6 +53,7 @@ export class SubjectsComponent {
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
   private message = inject(NzMessageService);
+  private sanitizer = inject(DomSanitizer);
 
   currentUser = this.authService.currentUser;
 
@@ -98,6 +100,9 @@ export class SubjectsComponent {
   isEditModalVisible = signal(false);
   editingSubjectId = signal<number | null>(null);
 
+  isPreviewVisible = signal(false);
+  previewUrl = signal<SafeResourceUrl | null>(null);
+
   addForm: FormGroup;
   editForm: FormGroup;
 
@@ -105,15 +110,52 @@ export class SubjectsComponent {
     this.addForm = this.fb.group({
       name: [null, [Validators.required]],
       professor: [null, [Validators.required]],
-      examDate: [null, [Validators.required]]
+      examDate: [null, [Validators.required]],
+      materials: this.fb.array([])
     });
 
     this.editForm = this.fb.group({
-      materialUrl: [null],
+      materials: this.fb.array([]),
       comment: [null],
       professorRating: [0],
       examRating: [{value: 0, disabled: false}]
     });
+  }
+
+  get addMaterials(): FormArray {
+    return this.addForm.get('materials') as FormArray;
+  }
+
+  get editMaterials(): FormArray {
+    return this.editForm.get('materials') as FormArray;
+  }
+
+  addMaterialField(form: FormGroup): void {
+    const materials = form.get('materials') as FormArray;
+    materials.push(this.fb.group({
+      name: ['', Validators.required],
+      url: ['', Validators.required]
+    }));
+  }
+
+  removeMaterialField(form: FormGroup, index: number): void {
+    const materials = form.get('materials') as FormArray;
+    materials.removeAt(index);
+  }
+
+  showPreview(url: string): void {
+    let finalUrl = url;
+    // Format Google Drive links
+    if (url.includes('drive.google.com') && url.includes('/view')) {
+      finalUrl = url.replace('/view', '/preview');
+    }
+    this.previewUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(finalUrl));
+    this.isPreviewVisible.set(true);
+  }
+
+  closePreview(): void {
+    this.isPreviewVisible.set(false);
+    this.previewUrl.set(null);
   }
 
   onSortChange(column: string, order: string | null): void {
@@ -131,6 +173,7 @@ export class SubjectsComponent {
 
   showAddModal(): void {
     this.addForm.reset();
+    this.addMaterials.clear();
     this.isAddModalVisible.set(true);
   }
 
@@ -176,8 +219,17 @@ export class SubjectsComponent {
       this.editForm.get('examRating')?.enable();
     }
 
+    this.editMaterials.clear();
+    if (subject.materials && subject.materials.length > 0) {
+      subject.materials.forEach(mat => {
+        this.editMaterials.push(this.fb.group({
+          name: [mat.name, Validators.required],
+          url: [mat.url, Validators.required]
+        }));
+      });
+    }
+
     this.editForm.patchValue({
-      materialUrl: subject.materialUrl,
       comment: subject.comment,
       professorRating: subject.professorRating || 0,
       examRating: subject.examRating || 0

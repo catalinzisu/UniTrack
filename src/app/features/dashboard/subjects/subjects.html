@@ -19,6 +19,7 @@
         <tr>
           <th [nzSortFn]="true" (nzSortOrderChange)="onSortChange('name', $event)">Materie</th>
           <th [nzSortFn]="true" (nzSortOrderChange)="onSortChange('professor', $event)">Profesor</th>
+          <th>Materiale</th>
           <th>Rating Profesor</th>
           <th>Rating Examen</th>
           <th>Data Examen</th>
@@ -30,6 +31,19 @@
           <tr>
             <td>{{ data.name }}</td>
             <td>{{ data.professor }}</td>
+            <td>
+              @if (data.materials && data.materials.length > 0) {
+                <div class="materials-list">
+                  @for (mat of data.materials; track mat.url) {
+                    <nz-tag nzColor="processing" style="cursor: pointer; margin-bottom: 4px;" (click)="showPreview(mat.url)">
+                      <span nz-icon nzType="link"></span> {{ mat.name }}
+                    </nz-tag>
+                  }
+                </div>
+              } @else {
+                <span style="color: #999;">-</span>
+              }
+            </td>
             <td>
               <!-- Inline edit for professor rating -->
               <app-rating [score]="data.professorRating || 0" (scoreChange)="onProfessorRatingChange(data, $event)"></app-rating>
@@ -58,7 +72,7 @@
         }
         @empty {
           <tr>
-            <td colspan="6" class="empty-state">
+            <td colspan="7" class="empty-state">
               Nu există materii adăugate conform criteriilor de căutare.
             </td>
           </tr>
@@ -92,6 +106,23 @@
           <input nz-input type="date" formControlName="examDate" />
         </nz-form-control>
       </nz-form-item>
+
+      <nz-divider nzText="Materiale (Opțional)"></nz-divider>
+      
+      <div formArrayName="materials">
+        @for (mat of addMaterials.controls; track $index) {
+          <div [formGroupName]="$index" class="material-row" style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center;">
+            <input nz-input formControlName="name" placeholder="Nume (ex. Curs)" style="flex: 1;" />
+            <input nz-input formControlName="url" placeholder="URL Google Drive" style="flex: 2;" />
+            <button nz-button nzType="text" nzDanger (click)="removeMaterialField(addForm, $index)" type="button">
+              <span nz-icon nzType="delete"></span>
+            </button>
+          </div>
+        }
+      </div>
+      <button nz-button nzType="dashed" nzBlock (click)="addMaterialField(addForm)" type="button" style="margin-top: 8px;">
+        <span nz-icon nzType="plus"></span> Adaugă Material
+      </button>
     </form>
   </ng-container>
 </nz-modal>
@@ -100,12 +131,22 @@
 <nz-modal [nzVisible]="isEditModalVisible()" nzTitle="Editează Materie" (nzOnCancel)="handleEditCancel()" (nzOnOk)="handleEditSubmit()">
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="editForm" nzLayout="vertical">
-      <nz-form-item>
-        <nz-form-label>URL Material</nz-form-label>
-        <nz-form-control>
-          <input nz-input formControlName="materialUrl" placeholder="Link către curs/materiale" type="url" />
-        </nz-form-control>
-      </nz-form-item>
+      <nz-divider nzText="Materiale (Opțional)"></nz-divider>
+
+      <div formArrayName="materials">
+        @for (mat of editMaterials.controls; track $index) {
+          <div [formGroupName]="$index" class="material-row" style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center;">
+            <input nz-input formControlName="name" placeholder="Nume (ex. Seminar)" style="flex: 1;" />
+            <input nz-input formControlName="url" placeholder="URL Google Drive" style="flex: 2;" />
+            <button nz-button nzType="text" nzDanger (click)="removeMaterialField(editForm, $index)" type="button">
+              <span nz-icon nzType="delete"></span>
+            </button>
+          </div>
+        }
+      </div>
+      <button nz-button nzType="dashed" nzBlock (click)="addMaterialField(editForm)" type="button" style="margin-top: 8px; margin-bottom: 24px;">
+        <span nz-icon nzType="plus"></span> Adaugă Material
+      </button>
 
       <nz-form-item>
         <nz-form-label>Comentariu</nz-form-label>
@@ -128,5 +169,15 @@
         </nz-form-control>
       </nz-form-item>
     </form>
+  </ng-container>
+</nz-modal>
+<!-- Preview Modal -->
+<nz-modal [nzVisible]="isPreviewVisible()" nzTitle="Vizualizare Material" (nzOnCancel)="closePreview()" [nzFooter]="null" nzWidth="80%">
+  <ng-container *nzModalContent>
+    @if (previewUrl()) {
+      <div style="width: 100%; height: 70vh;">
+        <iframe [src]="previewUrl()" width="100%" height="100%" style="border: none; border-radius: 8px;"></iframe>
+      </div>
+    }
   </ng-container>
 </nz-modal>
