@@ -1,0 +1,86 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 40px 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 30px;
+
+  h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    font-family: 'Inter', sans-serif;
+  }
+
+  p {
+    margin-top: 5px;
+    color: #666;
+    font-size: 14px;
+  }
+}
+
+.login-form-margin {
+  margin-bottom: 20px;
+}
+
+.forgot-password {
+  text-align: right;
+}
+
+.login-form-button {
+  height: 40px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 15px;
+  background: #764ba2;
+  border-color: #764ba2;
+  
+  &:hover {
+    background: #667eea;
+    border-color: #667eea;
+  }
+}
+
+.register-link {
+  text-align: center;
+  font-size: 14px;
+  
+  a {
+    color: #764ba2;
+    font-weight: 600;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #667eea;
+    }
+  }
+}
+
+// Override NgZorro inputs
+::ng-deep .ant-input-affix-wrapper {
+  border-radius: 8px;
+  padding: 8px 11px;
+}
