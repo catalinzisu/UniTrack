@@ -1,0 +1,132 @@
+<div class="subjects-container">
+  <nz-card>
+    <div class="header-actions">
+      <nz-input-group [nzPrefix]="searchIcon" class="search-input">
+        <input type="text" nz-input placeholder="Caută după nume sau profesor" 
+               [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+      </nz-input-group>
+      <ng-template #searchIcon>
+        <span nz-icon nzType="search"></span>
+      </ng-template>
+
+      <button nz-button nzType="primary" (click)="showAddModal()">
+        <span nz-icon nzType="plus"></span> Adaugă Materie
+      </button>
+    </div>
+
+    <nz-table #basicTable [nzData]="filteredSubjects()" [nzFrontPagination]="true" [nzPageSize]="10">
+      <thead>
+        <tr>
+          <th [nzSortFn]="true" (nzSortOrderChange)="onSortChange('name', $event)">Materie</th>
+          <th [nzSortFn]="true" (nzSortOrderChange)="onSortChange('professor', $event)">Profesor</th>
+          <th>Rating Profesor</th>
+          <th>Rating Examen</th>
+          <th>Data Examen</th>
+          <th>Acțiuni</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (data of basicTable.data; track data.id) {
+          <tr>
+            <td>{{ data.name }}</td>
+            <td>{{ data.professor }}</td>
+            <td>
+              <!-- Inline edit for professor rating -->
+              <app-rating [score]="data.professorRating || 0" (scoreChange)="onProfessorRatingChange(data, $event)"></app-rating>
+            </td>
+            <td>
+              @if (isExamPending(data.examDate)) {
+                <nz-tag nzColor="default">În așteptare</nz-tag>
+              } @else {
+                <!-- Exam rating shown if examDate < today -->
+                <app-rating [score]="data.examRating || 0" [readOnly]="true"></app-rating>
+              }
+            </td>
+            <td>{{ data.examDate | daysUntil }}</td>
+            <td>
+              <button nz-button nzType="text" nzShape="circle" (click)="showEditModal(data)" nz-tooltip nzTooltipTitle="Editează">
+                <span nz-icon nzType="edit" nzTheme="outline" class="edit-icon"></span>
+              </button>
+              <button nz-button nzType="text" nzShape="circle" nzDanger
+                      nz-popconfirm nzPopconfirmTitle="Ești sigur că vrei să ștergi această materie?"
+                      (nzOnConfirm)="deleteSubject(data.id)"
+                      nz-tooltip nzTooltipTitle="Șterge">
+                <span nz-icon nzType="delete" nzTheme="outline"></span>
+              </button>
+            </td>
+          </tr>
+        }
+        @empty {
+          <tr>
+            <td colspan="6" class="empty-state">
+              Nu există materii adăugate conform criteriilor de căutare.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </nz-table>
+  </nz-card>
+</div>
+
+<!-- Add Modal -->
+<nz-modal [nzVisible]="isAddModalVisible()" nzTitle="Adaugă Materie" (nzOnCancel)="handleAddCancel()" (nzOnOk)="handleAddSubmit()">
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="addForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>Nume Materie</nz-form-label>
+        <nz-form-control nzErrorTip="Introduceți numele materiei">
+          <input nz-input formControlName="name" placeholder="Ex: Matematică" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>Profesor</nz-form-label>
+        <nz-form-control nzErrorTip="Introduceți numele profesorului">
+          <input nz-input formControlName="professor" placeholder="Ex: Ion Popescu" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>Data Examen</nz-form-label>
+        <nz-form-control nzErrorTip="Selectați data examenului">
+          <input nz-input type="date" formControlName="examDate" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<!-- Edit Modal -->
+<nz-modal [nzVisible]="isEditModalVisible()" nzTitle="Editează Materie" (nzOnCancel)="handleEditCancel()" (nzOnOk)="handleEditSubmit()">
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="editForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label>URL Material</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="materialUrl" placeholder="Link către curs/materiale" type="url" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>Comentariu</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input formControlName="comment" placeholder="Notițe despre materie" rows="3"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>Rating Profesor</nz-form-label>
+        <nz-form-control>
+          <nz-rate formControlName="professorRating"></nz-rate>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>Rating Examen</nz-form-label>
+        <nz-form-control>
+          <nz-rate formControlName="examRating"></nz-rate>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

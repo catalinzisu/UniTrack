@@ -1,23 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzGridModule } from 'ng-zorro-antd/grid';
-import { CustomValidators } from '../../../shared/validators/custom-validators';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
-    ReactiveFormsModule, 
+    CommonModule,
+    ReactiveFormsModule,
     RouterLink,
-    NzFormModule, 
-    NzInputModule, 
-    NzButtonModule, 
+    NzFormModule,
+    NzInputModule,
+    NzButtonModule,
     NzCheckboxModule,
     NzGridModule
   ],
@@ -28,9 +30,13 @@ export class LoginComponent {
   loginForm: FormGroup;
   isLoading = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private msg = inject(NzMessageService);
+
+  constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, CustomValidators.studentEmail()]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
       remember: [true]
     });
@@ -42,12 +48,12 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
           this.isLoading = false;
+          this.msg.success('Autentificare cu succes!');
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           this.isLoading = false;
-          console.error('Login error', err);
-          // Here you'd typically show a notification using NzNotificationService
+          this.msg.error(err.message || 'Eroare la autentificare!');
         }
       });
     } else {

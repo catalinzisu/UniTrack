@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzGridModule } from 'ng-zorro-antd/grid';
-import { CustomValidators } from '../../../shared/validators/custom-validators';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -29,14 +30,18 @@ export class RegisterComponent {
   registerForm: FormGroup;
   isLoading = false;
 
-  faculties = ['FMI', 'FSEGA', 'Litere', 'Drept'];
-  specializations = ['Informatica', 'Matematica', 'Cibernetica', 'Drept Penal'];
-  studyYears = ['1', '2', '3', '4', 'Master 1', 'Master 2'];
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private msg = inject(NzMessageService);
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  faculties = ['FMI', 'FSEGA', 'Litere', 'Drept', 'Medicina'];
+  specializations = ['Informatica', 'Matematica', 'Cibernetica', 'Drept Penal', 'Medicina Generala'];
+  studyYears = ['1', '2', '3', '4', '5', '6', 'Master 1', 'Master 2'];
+
+  constructor(private fb: FormBuilder) {
     this.registerForm = this.fb.group({
-      email: ['', [Validators.required, CustomValidators.studentEmail()]],
-      password: ['', [Validators.required, CustomValidators.strongPassword()]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
@@ -44,25 +49,32 @@ export class RegisterComponent {
       specialization: [null, [Validators.required]],
       studyYear: [null, [Validators.required]]
     }, {
-      validators: [CustomValidators.matchPasswords('password', 'confirmPassword')]
+      validators: this.passwordMatchValidator
     });
+  }
+
+  passwordMatchValidator(g: FormGroup) {
+    return g.get('password')?.value === g.get('confirmPassword')?.value
+      ? null : { passwordsMismatch: true };
   }
 
   submitForm(): void {
     if (this.registerForm.valid) {
       this.isLoading = true;
-      
-      // Salvează datele utilizatorului în localStorage pentru a le folosi la login
       const userData = { ...this.registerForm.value };
-      delete userData.password;
-      delete userData.confirmPassword;
-      localStorage.setItem('registered_user', JSON.stringify(userData));
-
-      // Simulăm un request de înregistrare
-      setTimeout(() => {
-        this.isLoading = false;
-        this.router.navigate(['/auth/login']);
-      }, 1000);
+      delete userData.confirmPassword; // Nu salvam in BD
+      
+      this.authService.register(userData).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.msg.success('Cont creat cu succes! Te poți autentifica.');
+          this.router.navigate(['/auth/login']);
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.msg.error(err.message || 'Eroare la înregistrare!');
+        }
+      });
     } else {
       Object.values(this.registerForm.controls).forEach(control => {
         if (control.invalid) {

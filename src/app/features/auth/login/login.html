@@ -1,47 +1,48 @@
-<div class="auth-container">
-  <div class="auth-card">
-    <div class="auth-header">
-      <h2>Welcome Back!</h2>
-      <p>Log in to UniTrack</p>
-    </div>
+<div class="split-layout">
+  <div class="form-side">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h2>Welcome Back!</h2>
+        <p>Log in to UniTrack</p>
+      </div>
 
-    <form nz-form [formGroup]="loginForm" (ngSubmit)="submitForm()">
-      
-      <nz-form-item>
-        <nz-form-control nzErrorTip="Please input a valid @student.unitbv.ro or @student.uni.ro email!">
-          <nz-input-group nzPrefixIcon="user">
-            <input type="text" nz-input formControlName="email" placeholder="Email" />
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
+      <form nz-form [formGroup]="loginForm" (ngSubmit)="submitForm()" nzLayout="vertical">
+        <nz-form-item>
+          <nz-form-label>Email</nz-form-label>
+          <nz-form-control nzErrorTip="Please input a valid email!">
+            <input type="email" nz-input formControlName="email" placeholder="student@university.ro" />
+          </nz-form-control>
+        </nz-form-item>
 
-      <nz-form-item>
-        <nz-form-control nzErrorTip="Please input your Password!">
-          <nz-input-group nzPrefixIcon="lock">
-            <input type="password" nz-input formControlName="password" placeholder="Password" />
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
+        <nz-form-item>
+          <nz-form-label>Password</nz-form-label>
+          <nz-form-control nzErrorTip="Please input your Password!">
+            <input type="password" nz-input formControlName="password" placeholder="Enter password" />
+          </nz-form-control>
+        </nz-form-item>
 
-      <div nz-row class="login-form-margin">
-        <div nz-col [nzSpan]="12">
+        <div class="login-form-margin" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
           <label nz-checkbox formControlName="remember">
             <span>Remember me</span>
           </label>
+
         </div>
-        <div nz-col [nzSpan]="12" class="forgot-password">
-          <a class="login-form-forgot">Forgot password?</a>
+
+        <button nz-button class="login-form-button" [nzType]="'primary'" [nzLoading]="isLoading" nzBlock>
+          Log in
+        </button>
+
+        <div class="register-link">
+          Don't have an account? <a routerLink="/auth/register">Register now!</a>
         </div>
-      </div>
-
-      <button nz-button class="login-form-button" [nzType]="'primary'" [nzLoading]="isLoading" nzBlock>
-        Log in
-      </button>
-
-      <div class="register-link">
-        Don't have an account? <a routerLink="/auth/register">Register now!</a>
-      </div>
-
-    </form>
+      </form>
+    </div>
+  </div>
+  
+  <div class="visual-side">
+    <div class="visual-content">
+      <h1>Your academic journey,<br>simplified.</h1>
+      <p>Manage all your subjects, track exams, and rate professors in one beautifully designed platform.</p>
+    </div>
   </div>
 </div>
