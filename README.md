@@ -1,4 +1,4 @@
-# [Numele Proiectului - ex: UniDash / SesiuneHub]
+# UniTrack
 
 ## 📖 Descriere
 O aplicație web dedicată studenților, care centralizează materialele de curs, oferă un sistem de rating pentru profesori și examene, și include remindere pentru sesiune. Totul este filtrat inteligent pe baza profilului studentului (Facultate, Specializare, An). 
