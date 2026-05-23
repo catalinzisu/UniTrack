@@ -4,15 +4,15 @@
       <h1>UniTrack</h1>
     </div>
     <ul nz-menu nzTheme="dark" nzMode="inline">
-      <li nz-menu-item nzSelected>
+      <li nz-menu-item routerLink="/dashboard/subjects" routerLinkActive="ant-menu-item-selected">
         <span nz-icon nzType="dashboard"></span>
         <span>Dashboard</span>
       </li>
-      <li nz-menu-item (click)="notImplemented()">
+      <li nz-menu-item routerLink="/dashboard/subjects" routerLinkActive="ant-menu-item-selected">
         <span nz-icon nzType="book"></span>
         <span>My Subjects</span>
       </li>
-      <li nz-menu-item (click)="notImplemented()">
+      <li nz-menu-item routerLink="/dashboard/profile" routerLinkActive="ant-menu-item-selected">
         <span nz-icon nzType="profile"></span>
         <span>Profile</span>
       </li>
@@ -35,7 +35,7 @@
               <div class="stat-card">
                 <span nz-icon nzType="read" class="stat-icon"></span>
                 <div class="stat-info">
-                  <h3>{{ filteredSubjects().length }}</h3>
+                  <h3>{{ subjectsCount() }}</h3>
                   <p>Enrolled Subjects</p>
                 </div>
               </div>
@@ -65,144 +65,8 @@
           </div>
         </div>
 
-        <nz-card class="subjects-card">
-          <div class="table-header" style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center; gap: 16px;">
-              <h3 style="margin: 0; font-size: 18px; font-weight: 600;">My Subjects</h3>
-              <button nz-button nzType="primary" (click)="showAddModal()">
-                <span nz-icon nzType="plus"></span> Adaugă Materie
-              </button>
-            </div>
-            <nz-input-group [nzPrefix]="prefixIconSearch" style="width: 300px;">
-              <input type="text" nz-input placeholder="Search subjects or professors..." [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" />
-            </nz-input-group>
-            <ng-template #prefixIconSearch>
-              <span nz-icon nzType="search"></span>
-            </ng-template>
-          </div>
-
-          <nz-table #basicTable [nzData]="filteredSubjects()" [nzShowPagination]="true" nzSize="middle">
-            <thead>
-              <tr>
-                <th nzColumnKey="name" [nzSortFn]="sortByNameFn">Materie</th>
-                <th nzColumnKey="professor" [nzSortFn]="sortByProfFn">Profesor</th>
-                <th>Rating Profesor</th>
-                <th>Rating Examen</th>
-                <th>Data Examen</th>
-                <th>Acțiuni</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (data of basicTable.data; track data.id) {
-                <tr>
-                  <td>{{ data.name }}</td>
-                  <td>{{ data.professor }}</td>
-                  <td>
-                    <app-rating 
-                      [score]="data.professorRating || 0" 
-                      (scoreChange)="updateProfessorRating(data.id, $event)">
-                    </app-rating>
-                  </td>
-                  <td>
-                    @if (hasTakenExam(data.examDate)) {
-                      <app-rating 
-                        [score]="data.examRating || 0" 
-                        (scoreChange)="updateExamRating(data.id, $event)">
-                      </app-rating>
-                    } @else {
-                      <span style="color: #999; font-style: italic; font-size: 12px;">În așteptare</span>
-                    }
-                  </td>
-                  <td>
-                    @if (data.examDate) {
-                      <div style="display: flex; flex-direction: column;">
-                        <span>{{ data.examDate }}</span>
-                        <span style="font-size: 12px; color: #1890ff;">{{ getExamReminder(data.examDate) }}</span>
-                      </div>
-                    } @else {
-                      <span style="color: #999;">Nesetată</span>
-                    }
-                  </td>
-                  <td>
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                      <a (click)="showEditModal(data)" style="color: #1890ff; font-size: 13px;">Adaugă material</a>
-                      <nz-divider nzType="vertical"></nz-divider>
-                      <a (click)="showEditModal(data)" style="color: #52c41a; font-size: 13px;">Adaugă comentariu</a>
-                      <nz-divider nzType="vertical"></nz-divider>
-                      <a nz-popconfirm 
-                         nzPopconfirmTitle="Ești sigur că vrei să ștergi această materie?" 
-                         nzPopconfirmPlacement="left" 
-                         (nzOnConfirm)="deleteSubject(data.id)"
-                         style="color: #ff4d4f; font-size: 16px;"
-                         nz-tooltip nzTooltipTitle="Șterge materie">
-                         <span nz-icon nzType="delete" nzTheme="outline"></span>
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-              }
-              
-              @if (basicTable.data.length === 0) {
-                <tr>
-                  <td colspan="6" style="text-align: center; padding: 30px;">
-                    <span nz-icon nzType="inbox" style="font-size: 24px; color: #ccc;"></span>
-                    <p style="color: #999; margin-top: 8px;">Nu a fost găsită nicio materie.</p>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </nz-table>
-        </nz-card>
+        <router-outlet></router-outlet>
       </div>
     </nz-content>
   </nz-layout>
-
-<!-- Modal Adăugare Materie -->
-<nz-modal [(nzVisible)]="isAddModalVisible" nzTitle="Adaugă o nouă materie" (nzOnCancel)="handleAddCancel()" (nzOnOk)="handleAddSubmit()">
-  <ng-container *nzModalContent>
-    <form nz-form [formGroup]="addSubjectForm">
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">Nume Materie</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Te rog introdu numele materiei!">
-          <input nz-input formControlName="name" id="name" placeholder="ex: Programare Web" />
-        </nz-form-control>
-      </nz-form-item>
-      
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="professor">Profesor</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Te rog introdu numele profesorului!">
-          <input nz-input formControlName="professor" id="professor" placeholder="ex: Dr. Ion Popescu" />
-        </nz-form-control>
-      </nz-form-item>
-      
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="examDate">Data Examen</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Te rog selectează data!">
-          <input nz-input type="date" formControlName="examDate" id="examDate" />
-        </nz-form-control>
-      </nz-form-item>
-    </form>
-  </ng-container>
-</nz-modal>
-
-<!-- Modal Editare Materie -->
-<nz-modal [(nzVisible)]="isEditModalVisible" nzTitle="Adaugă Material sau Comentariu" (nzOnCancel)="handleEditCancel()" (nzOnOk)="handleEditSubmit()">
-  <ng-container *nzModalContent>
-    <form nz-form [formGroup]="editSubjectForm">
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="materialUrl">Link Material</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <input nz-input formControlName="materialUrl" id="materialUrl" placeholder="https://..." />
-        </nz-form-control>
-      </nz-form-item>
-      
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="comment">Comentariu</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <textarea nz-input formControlName="comment" id="comment" rows="3" placeholder="Notițe..."></textarea>
-        </nz-form-control>
-      </nz-form-item>
-    </form>
-  </ng-container>
-</nz-modal>
 </nz-layout>
