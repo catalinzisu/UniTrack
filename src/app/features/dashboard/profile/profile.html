@@ -1,0 +1,69 @@
+<nz-card nzTitle="My Profile" class="profile-card">
+  <form nz-form [formGroup]="profileForm" (ngSubmit)="saveProfile()" nzLayout="vertical">
+    <div nz-row [nzGutter]="16">
+      <div nz-col nzXs="24" nzSm="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>First Name</nz-form-label>
+          <nz-form-control nzErrorTip="Please input your first name!">
+            <input nz-input formControlName="firstName" placeholder="First Name" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzXs="24" nzSm="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Last Name</nz-form-label>
+          <nz-form-control nzErrorTip="Please input your last name!">
+            <input nz-input formControlName="lastName" placeholder="Last Name" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <nz-form-item>
+      <nz-form-label nzRequired>Email</nz-form-label>
+      <nz-form-control>
+        <input nz-input formControlName="email" readonly class="readonly-input" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <div nz-row [nzGutter]="16">
+      <div nz-col nzXs="24" nzSm="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Faculty</nz-form-label>
+          <nz-form-control nzErrorTip="Please select a faculty!">
+            <nz-select formControlName="faculty" nzPlaceHolder="Select Faculty">
+              <nz-option *ngFor="let f of faculties" [nzValue]="f" [nzLabel]="f"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzXs="24" nzSm="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Specialization</nz-form-label>
+          <nz-form-control nzErrorTip="Please select a specialization!">
+            <nz-select formControlName="specialization" nzPlaceHolder="Select Specialization">
+              <nz-option *ngFor="let s of specializations" [nzValue]="s" [nzLabel]="s"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <nz-form-item>
+      <nz-form-label nzRequired>Study Year</nz-form-label>
+      <nz-form-control nzErrorTip="Please select study year!">
+        <nz-select formControlName="studyYear" nzPlaceHolder="Select Study Year">
+          <nz-option *ngFor="let y of studyYears" [nzValue]="y" [nzLabel]="y"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item class="form-actions">
+      <nz-form-control>
+        <button nz-button nzType="primary" [nzLoading]="isLoading" type="submit" [disabled]="profileForm.invalid || profileForm.pristine">
+          <span nz-icon nzType="save"></span> Save Changes
+        </button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-card>

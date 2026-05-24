@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal, effect } from '@angular/core';
+import { Component, computed, inject, signal, effect } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { SubjectService } from '../../core/services/subject.service';
@@ -27,13 +27,12 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   private authService = inject(AuthService);
   private subjectService = inject(SubjectService);
   private router = inject(Router);
 
-  user: any;
-
+  user = this.authService.currentUser;
   subjectsCount = signal<number>(0);
 
   constructor() {
@@ -62,9 +61,6 @@ export class DashboardComponent implements OnInit {
     }, { allowSignalWrites: true });
   }
 
-  ngOnInit() {
-    this.user = this.authService.currentUser();
-  }
 
   logout() {
     this.authService.logout();

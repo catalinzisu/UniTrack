@@ -1,6 +1,6 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, delay, of, catchError } from 'rxjs';
+import { Observable, tap, delay, of, catchError, timer, switchMap, throwError } from 'rxjs';
 import { User } from '../models/user.model';
 
 @Injectable({
@@ -38,16 +38,16 @@ export class AuthService {
   }
 
   register(userData: any): Observable<any> {
-    return of({ success: true }).pipe(
-      delay(800),
-      tap(() => {
+    return timer(800).pipe(
+      switchMap(() => {
         const users = this.getRegisteredUsers();
         // Verificăm dacă email-ul există deja
         if (users.find(u => u.email === userData.email)) {
-          throw new Error('Acest email este deja înregistrat!');
+          return throwError(() => new Error('Acest email este deja înregistrat!'));
         }
         users.push(userData);
         localStorage.setItem('registered_users', JSON.stringify(users));
+        return of({ success: true });
       })
     );
   }
@@ -90,6 +90,29 @@ export class AuthService {
         } else {
           sessionStorage.setItem('auth_token', token);
           sessionStorage.setItem('active_user_session', userStr);
+        }
+      })
+    );
+  }
+
+  updateProfile(updatedUser: User): Observable<any> {
+    return timer(500).pipe(
+      tap(() => {
+        const users = this.getRegisteredUsers();
+        const index = users.findIndex((u: any) => u.email === updatedUser.email);
+        if (index > -1) {
+          users[index] = { ...users[index], ...updatedUser };
+          localStorage.setItem('registered_users', JSON.stringify(users));
+          
+          this.currentUser.set(updatedUser);
+          
+          if (localStorage.getItem('active_user_session')) {
+            localStorage.setItem('active_user_session', JSON.stringify(updatedUser));
+          } else if (sessionStorage.getItem('active_user_session')) {
+            sessionStorage.setItem('active_user_session', JSON.stringify(updatedUser));
+          }
+        } else {
+          throw new Error('User not found');
         }
       })
     );

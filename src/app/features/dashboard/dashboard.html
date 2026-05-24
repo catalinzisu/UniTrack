@@ -18,7 +18,7 @@
   <nz-layout>
     <nz-header class="app-header">
       <div class="header-content">
-        <h2>Welcome back, {{ user?.firstName }}!</h2>
+        <h2>Welcome back, {{ user()?.firstName }}!</h2>
         <button nz-button nzType="default" nzDanger (click)="logout()">
           <span nz-icon nzType="logout"></span> Logout
         </button>
@@ -43,7 +43,7 @@
               <div class="stat-card">
                 <span nz-icon nzType="bank" class="stat-icon"></span>
                 <div class="stat-info">
-                  <h3>{{ user?.faculty }}</h3>
+                  <h3>{{ user()?.faculty }}</h3>
                   <p>Faculty</p>
                 </div>
               </div>
@@ -54,7 +54,7 @@
               <div class="stat-card">
                 <span nz-icon nzType="schedule" class="stat-icon"></span>
                 <div class="stat-info">
-                  <h3>Year {{ user?.studyYear }}</h3>
+                  <h3>Year {{ user()?.studyYear }}</h3>
                   <p>Study Year</p>
                 </div>
               </div>

@@ -1,28 +1,72 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, NzCardModule, NzDescriptionsModule, NzIconModule],
-  template: `
-    <nz-card nzTitle="My Profile">
-      <nz-descriptions nzBordered [nzColumn]="1">
-        <nz-descriptions-item nzTitle="First Name">{{ user?.firstName }}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="Last Name">{{ user?.lastName }}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="Email">{{ user?.email }}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="Faculty">{{ user?.faculty }}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="Specialization">{{ user?.specialization }}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="Study Year">{{ user?.studyYear }}</nz-descriptions-item>
-      </nz-descriptions>
-    </nz-card>
-  `
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule,
+    NzCardModule, 
+    NzFormModule,
+    NzInputModule,
+    NzSelectModule,
+    NzButtonModule,
+    NzIconModule,
+    NzGridModule
+  ],
+  templateUrl: './profile.html',
+  styleUrl: './profile.scss'
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
   private authService = inject(AuthService);
-  user = this.authService.currentUser();
+  private fb = inject(FormBuilder);
+  private msg = inject(NzMessageService);
+
+  profileForm!: FormGroup;
+  isLoading = false;
+
+  faculties = ['FMI', 'FSEGA', 'Litere', 'Drept', 'Medicina'];
+  specializations = ['Informatica', 'Matematica', 'Cibernetica', 'Drept Penal', 'Medicina Generala'];
+  studyYears = ['1', '2', '3', '4', '5', '6', 'Master 1', 'Master 2'];
+
+  ngOnInit() {
+    const user = this.authService.currentUser();
+    this.profileForm = this.fb.group({
+      firstName: [user?.firstName, [Validators.required]],
+      lastName: [user?.lastName, [Validators.required]],
+      email: [user?.email, [Validators.required, Validators.email]],
+      faculty: [user?.faculty, [Validators.required]],
+      specialization: [user?.specialization, [Validators.required]],
+      studyYear: [user?.studyYear, [Validators.required]]
+    });
+  }
+
+  saveProfile() {
+    if (this.profileForm.valid) {
+      this.isLoading = true;
+      const updatedData = this.profileForm.value;
+      this.authService.updateProfile(updatedData).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.msg.success('Profil actualizat cu succes!');
+          this.profileForm.markAsPristine();
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.msg.error(err.message || 'Eroare la actualizarea profilului');
+        }
+      });
+    }
+  }
 }

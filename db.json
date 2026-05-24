@@ -220,18 +220,6 @@
           "professorRating": 4,
           "examRating": 3,
           "examDate": "2026-06-15"
-        },
-        {
-          "name": "ceva",
-          "professor": "cv",
-          "examDate": "2005-02-22",
-          "materials": [],
-          "faculty": "FMI",
-          "specialization": "Informatica",
-          "studyYear": "2",
-          "professorRating": 0,
-          "examRating": 3,
-          "id": 1779609263537
         }
       ]
     },
