@@ -1,4 +1,4 @@
-import { Injectable, signal, computed, WritableSignal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Subject } from '../models/subject.model';
 import { MOCK_SUBJECTS } from '../mocks/mock-data';
 
@@ -6,47 +6,40 @@ import { MOCK_SUBJECTS } from '../mocks/mock-data';
   providedIn: 'root'
 })
 export class SubjectService {
-  private subjectsSignal: WritableSignal<Subject[]>;
 
-  constructor() {
-    const saved = localStorage.getItem('unitrack_subjects');
+  constructor() {}
+
+  getGlobalSubjects(): Subject[] {
+    const saved = localStorage.getItem('unitrack_global_subjects');
     if (saved) {
-      this.subjectsSignal = signal(JSON.parse(saved));
-    } else {
-      this.subjectsSignal = signal(MOCK_SUBJECTS);
-      this.saveToStorage();
+      return JSON.parse(saved);
     }
+    // Initialize with mock
+    localStorage.setItem('unitrack_global_subjects', JSON.stringify(MOCK_SUBJECTS));
+    return MOCK_SUBJECTS;
   }
 
-  private saveToStorage() {
-    localStorage.setItem('unitrack_subjects', JSON.stringify(this.subjectsSignal()));
+  saveGlobalSubjects(subjects: Subject[]): void {
+    localStorage.setItem('unitrack_global_subjects', JSON.stringify(subjects));
   }
 
-  getSubjectsForUser(faculty: string, specialization: string, studyYear: string | number) {
-    return computed(() => {
-      return this.subjectsSignal().filter(s => 
-        s.faculty === faculty && 
-        s.specialization === specialization && 
-        String(s.studyYear) === String(studyYear)
-      );
-    });
-  }
-
-  addSubject(subject: Subject) {
+  addGlobalSubject(subject: Subject): Subject {
+    const globals = this.getGlobalSubjects();
     const newSubject = { ...subject, id: Date.now() };
-    this.subjectsSignal.update(subjects => [...subjects, newSubject as any]);
-    this.saveToStorage();
+    globals.push(newSubject as Subject);
+    this.saveGlobalSubjects(globals);
+    return newSubject as Subject;
   }
 
-  deleteSubject(id: number | string) {
-    this.subjectsSignal.update(subjects => subjects.filter(s => String(s.id) !== String(id)));
-    this.saveToStorage();
+  getUserSubjects(email: string): Subject[] | null {
+    const saved = localStorage.getItem(`unitrack_user_subjects_${email}`);
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    return null;
   }
 
-  updateSubject(id: number | string, changes: Partial<Subject>) {
-    this.subjectsSignal.update(subjects => 
-      subjects.map(s => String(s.id) === String(id) ? { ...s, ...changes } : s)
-    );
-    this.saveToStorage();
+  saveUserSubjects(email: string, subjects: Subject[]): void {
+    localStorage.setItem(`unitrack_user_subjects_${email}`, JSON.stringify(subjects));
   }
 }

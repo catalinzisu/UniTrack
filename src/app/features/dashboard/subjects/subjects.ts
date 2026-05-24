@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -15,6 +15,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzRateModule } from 'ng-zorro-antd/rate';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 import { AppRatingComponent } from '../../../shared/components/rating/rating.component';
 import { DaysUntilPipe } from '../../../shared/pipes/days-until.pipe';
@@ -42,6 +43,7 @@ import { Subject } from '../../../core/models/subject.model';
     NzTagModule,
     NzToolTipModule,
     NzRateModule,
+    NzSelectModule,
     AppRatingComponent,
     DaysUntilPipe
   ],
@@ -57,20 +59,18 @@ export class SubjectsComponent {
 
   currentUser = this.authService.currentUser;
 
-  userSubjectsSignal = computed(() => {
-    const user = this.currentUser();
-    if (user && user.faculty && user.specialization && user.studyYear) {
-      return this.subjectService.getSubjectsForUser(user.faculty, user.specialization, user.studyYear)();
-    }
-    return [] as Subject[];
-  });
+  globalSubjects = signal<Subject[]>([]);
+  mySubjects = signal<Subject[]>([]);
+
+  addMode = signal<'select' | 'create'>('select');
+  selectedGlobalSubjectId = signal<number | null>(null);
 
   searchTerm = signal('');
   sortColumn = signal<string | null>(null);
   sortOrder = signal<string | null>(null);
 
   filteredSubjects = computed(() => {
-    let subjects = this.userSubjectsSignal();
+    let subjects = this.mySubjects();
     const term = this.searchTerm().toLowerCase();
 
     if (term) {
@@ -94,6 +94,11 @@ export class SubjectsComponent {
     }
 
     return subjects;
+  });
+
+  availableGlobalSubjects = computed(() => {
+    const myIds = this.mySubjects().map(s => s.id);
+    return this.globalSubjects().filter(s => !myIds.includes(s.id));
   });
 
   isAddModalVisible = signal(false);
@@ -120,6 +125,35 @@ export class SubjectsComponent {
       professorRating: [0],
       examRating: [{value: 0, disabled: false}]
     });
+
+    effect(() => {
+      const user = this.currentUser();
+      if (user) {
+        this.globalSubjects.set(this.subjectService.getGlobalSubjects());
+        
+        let personal = this.subjectService.getUserSubjects(user.email);
+        if (!personal) {
+          const globals = this.globalSubjects();
+          personal = globals.filter(s => 
+            s.faculty === user.faculty && 
+            s.specialization === user.specialization && 
+            String(s.studyYear) === String(user.studyYear)
+          );
+          this.subjectService.saveUserSubjects(user.email, personal);
+        }
+        this.mySubjects.set(personal);
+      } else {
+        this.globalSubjects.set([]);
+        this.mySubjects.set([]);
+      }
+    }, { allowSignalWrites: true });
+  }
+
+  saveMySubjects() {
+    const user = this.currentUser();
+    if (user) {
+      this.subjectService.saveUserSubjects(user.email, this.mySubjects());
+    }
   }
 
   get addMaterials(): FormArray {
@@ -145,7 +179,6 @@ export class SubjectsComponent {
 
   showPreview(url: string): void {
     let finalUrl = url;
-    // Format Google Drive links
     if (url.includes('drive.google.com') && url.includes('/view')) {
       finalUrl = url.replace('/view', '/preview');
     }
@@ -172,9 +205,15 @@ export class SubjectsComponent {
   }
 
   showAddModal(): void {
+    this.addMode.set('select');
+    this.selectedGlobalSubjectId.set(null);
     this.addForm.reset();
     this.addMaterials.clear();
     this.isAddModalVisible.set(true);
+  }
+
+  toggleAddMode() {
+    this.addMode.set(this.addMode() === 'select' ? 'create' : 'select');
   }
 
   handleAddCancel(): void {
@@ -182,29 +221,49 @@ export class SubjectsComponent {
   }
 
   handleAddSubmit(): void {
-    if (this.addForm.valid) {
-      const user = this.currentUser();
-      if (!user) return;
-
-      const newSubject: Partial<Subject> = {
-        ...this.addForm.value,
-        faculty: user.faculty,
-        specialization: user.specialization,
-        studyYear: user.studyYear,
-        professorRating: 0,
-        examRating: 0
-      };
-
-      this.subjectService.addSubject(newSubject as Subject);
-      this.message.success('Materia a fost adăugată cu succes!');
-      this.isAddModalVisible.set(false);
-    } else {
-      Object.values(this.addForm.controls).forEach(control => {
-        if (control.invalid) {
-          control.markAsDirty();
-          control.updateValueAndValidity({ onlySelf: true });
+    if (this.addMode() === 'select') {
+      const id = this.selectedGlobalSubjectId();
+      if (id) {
+        const subjectToAdd = this.globalSubjects().find(s => s.id === id);
+        if (subjectToAdd) {
+          this.mySubjects.update(list => [...list, JSON.parse(JSON.stringify(subjectToAdd))]);
+          this.saveMySubjects();
+          this.message.success('Materia a fost adăugată în lista ta!');
+          this.isAddModalVisible.set(false);
         }
-      });
+      } else {
+        this.message.error('Vă rugăm să selectați o materie din catalog.');
+      }
+    } else {
+      if (this.addForm.valid) {
+        const user = this.currentUser();
+        if (!user) return;
+
+        const newSubject: Partial<Subject> = {
+          ...this.addForm.value,
+          faculty: user.faculty,
+          specialization: user.specialization,
+          studyYear: user.studyYear,
+          professorRating: 0,
+          examRating: 0
+        };
+
+        const createdGlobal = this.subjectService.addGlobalSubject(newSubject as Subject);
+        this.globalSubjects.set(this.subjectService.getGlobalSubjects());
+        
+        this.mySubjects.update(list => [...list, JSON.parse(JSON.stringify(createdGlobal))]);
+        this.saveMySubjects();
+
+        this.message.success('Materia a fost creată și adăugată în catalog!');
+        this.isAddModalVisible.set(false);
+      } else {
+        Object.values(this.addForm.controls).forEach(control => {
+          if (control.invalid) {
+            control.markAsDirty();
+            control.updateValueAndValidity({ onlySelf: true });
+          }
+        });
+      }
     }
   }
 
@@ -247,7 +306,8 @@ export class SubjectsComponent {
     if (this.editForm.valid) {
       const id = this.editingSubjectId();
       if (id) {
-        this.subjectService.updateSubject(id, this.editForm.getRawValue());
+        this.mySubjects.update(list => list.map(s => s.id === id ? { ...s, ...this.editForm.getRawValue() } : s));
+        this.saveMySubjects();
         this.message.success('Materia a fost actualizată!');
       }
       this.isEditModalVisible.set(false);
@@ -255,16 +315,18 @@ export class SubjectsComponent {
     }
   }
 
-  deleteSubject(id: number | undefined): void {
+  removeSubjectFromList(id: number | undefined): void {
     if (id) {
-      this.subjectService.deleteSubject(id);
-      this.message.success('Materia a fost ștearsă!');
+      this.mySubjects.update(list => list.filter(s => s.id !== id));
+      this.saveMySubjects();
+      this.message.success('Materia a fost eliminată din lista ta!');
     }
   }
 
   onProfessorRatingChange(subject: Subject, newRating: number): void {
     if (subject.id) {
-      this.subjectService.updateSubject(subject.id, { professorRating: newRating });
+      this.mySubjects.update(list => list.map(s => s.id === subject.id ? { ...s, professorRating: newRating } : s));
+      this.saveMySubjects();
     }
   }
 }

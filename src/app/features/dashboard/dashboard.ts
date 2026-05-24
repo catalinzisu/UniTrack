@@ -36,13 +36,18 @@ export class DashboardComponent implements OnInit {
 
   subjectsCount = computed(() => {
     const currentUser = this.authService.currentUser();
-    if (currentUser && currentUser.faculty && currentUser.specialization && currentUser.studyYear) {
-      const subjectsSignal = this.subjectService.getSubjectsForUser(
-        currentUser.faculty,
-        currentUser.specialization,
-        currentUser.studyYear
-      );
-      return subjectsSignal().length;
+    if (currentUser) {
+      const personal = this.subjectService.getUserSubjects(currentUser.email);
+      if (personal) {
+        return personal.length;
+      }
+      
+      const globals = this.subjectService.getGlobalSubjects();
+      return globals.filter(s => 
+        s.faculty === currentUser.faculty && 
+        s.specialization === currentUser.specialization && 
+        String(s.studyYear) === String(currentUser.studyYear)
+      ).length;
     }
     return 0;
   });

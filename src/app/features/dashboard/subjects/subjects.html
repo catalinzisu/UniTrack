@@ -62,9 +62,9 @@
                 <span nz-icon nzType="edit" nzTheme="outline" class="edit-icon"></span>
               </button>
               <button nz-button nzType="text" nzShape="circle" nzDanger
-                      nz-popconfirm nzPopconfirmTitle="Ești sigur că vrei să ștergi această materie?"
-                      (nzOnConfirm)="deleteSubject(data.id)"
-                      nz-tooltip nzTooltipTitle="Șterge">
+                      nz-popconfirm nzPopconfirmTitle="Ești sigur că vrei să elimini această materie din lista ta?"
+                      (nzOnConfirm)="removeSubjectFromList(data.id)"
+                      nz-tooltip nzTooltipTitle="Elimină din lista mea">
                 <span nz-icon nzType="delete" nzTheme="outline"></span>
               </button>
             </td>
@@ -85,45 +85,72 @@
 <!-- Add Modal -->
 <nz-modal [nzVisible]="isAddModalVisible()" nzTitle="Adaugă Materie" (nzOnCancel)="handleAddCancel()" (nzOnOk)="handleAddSubmit()">
   <ng-container *nzModalContent>
-    <form nz-form [formGroup]="addForm" nzLayout="vertical">
-      <nz-form-item>
-        <nz-form-label nzRequired>Nume Materie</nz-form-label>
-        <nz-form-control nzErrorTip="Introduceți numele materiei">
-          <input nz-input formControlName="name" placeholder="Ex: Matematică" />
-        </nz-form-control>
-      </nz-form-item>
-
-      <nz-form-item>
-        <nz-form-label nzRequired>Profesor</nz-form-label>
-        <nz-form-control nzErrorTip="Introduceți numele profesorului">
-          <input nz-input formControlName="professor" placeholder="Ex: Ion Popescu" />
-        </nz-form-control>
-      </nz-form-item>
-
-      <nz-form-item>
-        <nz-form-label nzRequired>Data Examen</nz-form-label>
-        <nz-form-control nzErrorTip="Selectați data examenului">
-          <input nz-input type="date" formControlName="examDate" />
-        </nz-form-control>
-      </nz-form-item>
-
-      <nz-divider nzText="Materiale (Opțional)"></nz-divider>
-      
-      <div formArrayName="materials">
-        @for (mat of addMaterials.controls; track $index) {
-          <div [formGroupName]="$index" class="material-row" style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center;">
-            <input nz-input formControlName="name" placeholder="Nume (ex. Curs)" style="flex: 1;" />
-            <input nz-input formControlName="url" placeholder="URL Google Drive" style="flex: 2;" />
-            <button nz-button nzType="text" nzDanger (click)="removeMaterialField(addForm, $index)" type="button">
-              <span nz-icon nzType="delete"></span>
-            </button>
-          </div>
-        }
+    @if (addMode() === 'select') {
+      <div style="margin-bottom: 24px;">
+        <p style="margin-bottom: 16px;">Selectează o materie existentă în catalogul global:</p>
+        <nz-select 
+          nzShowSearch 
+          nzAllowClear 
+          nzPlaceHolder="Caută o materie..." 
+          [ngModel]="selectedGlobalSubjectId()"
+          (ngModelChange)="selectedGlobalSubjectId.set($event)"
+          style="width: 100%;">
+          @for (subject of availableGlobalSubjects(); track subject.id) {
+            <nz-option [nzValue]="subject.id" [nzLabel]="subject.name + ' (' + subject.professor + ')'"></nz-option>
+          }
+        </nz-select>
+        
+        <div style="margin-top: 24px; text-align: center;">
+          <a (click)="toggleAddMode()" style="color: #1890ff; text-decoration: underline;">Nu găsești materia? Creează una nouă</a>
+        </div>
       </div>
-      <button nz-button nzType="dashed" nzBlock (click)="addMaterialField(addForm)" type="button" style="margin-top: 8px;">
-        <span nz-icon nzType="plus"></span> Adaugă Material
-      </button>
-    </form>
+    } @else {
+      <div>
+        <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <h4 style="margin: 0; color: #1890ff;">Creează materie nouă</h4>
+          <a (click)="toggleAddMode()" style="color: #666; font-size: 13px;">Înapoi la selecție</a>
+        </div>
+        <form nz-form [formGroup]="addForm" nzLayout="vertical">
+          <nz-form-item>
+            <nz-form-label nzRequired>Nume Materie</nz-form-label>
+            <nz-form-control nzErrorTip="Introduceți numele materiei">
+              <input nz-input formControlName="name" placeholder="Ex: Matematică" />
+            </nz-form-control>
+          </nz-form-item>
+    
+          <nz-form-item>
+            <nz-form-label nzRequired>Profesor</nz-form-label>
+            <nz-form-control nzErrorTip="Introduceți numele profesorului">
+              <input nz-input formControlName="professor" placeholder="Ex: Ion Popescu" />
+            </nz-form-control>
+          </nz-form-item>
+    
+          <nz-form-item>
+            <nz-form-label nzRequired>Data Examen</nz-form-label>
+            <nz-form-control nzErrorTip="Selectați data examenului">
+              <input nz-input type="date" formControlName="examDate" />
+            </nz-form-control>
+          </nz-form-item>
+    
+          <nz-divider nzText="Materiale (Opțional)"></nz-divider>
+          
+          <div formArrayName="materials">
+            @for (mat of addMaterials.controls; track $index) {
+              <div [formGroupName]="$index" class="material-row" style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center;">
+                <input nz-input formControlName="name" placeholder="Nume (ex. Curs)" style="flex: 1;" />
+                <input nz-input formControlName="url" placeholder="URL Google Drive" style="flex: 2;" />
+                <button nz-button nzType="text" nzDanger (click)="removeMaterialField(addForm, $index)" type="button">
+                  <span nz-icon nzType="delete"></span>
+                </button>
+              </div>
+            }
+          </div>
+          <button nz-button nzType="dashed" nzBlock (click)="addMaterialField(addForm)" type="button" style="margin-top: 8px;">
+            <span nz-icon nzType="plus"></span> Adaugă Material
+          </button>
+        </form>
+      </div>
+    }
   </ng-container>
 </nz-modal>
 

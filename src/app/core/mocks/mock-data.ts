@@ -56,6 +56,50 @@ export const MOCK_SUBJECTS: Subject[] = [
     professorRating: 4,
     examRating: 4,
     examDate: '2026-06-25'
+  },
+  {
+    id: 6,
+    name: 'Dezvoltare Web cu Angular',
+    professor: 'Dr. Cătălin Zisu',
+    faculty: 'FMI',
+    specialization: 'Informatica',
+    studyYear: '2',
+    professorRating: 5,
+    examRating: 4,
+    examDate: '2026-06-28'
+  },
+  {
+    id: 7,
+    name: 'Securitate Cibernetică',
+    professor: 'Dr. Alex Popescu',
+    faculty: 'FMI',
+    specialization: 'Informatica',
+    studyYear: '2',
+    professorRating: 4,
+    examRating: 3,
+    examDate: '2026-06-30'
+  },
+  {
+    id: 8,
+    name: 'Algoritmi Avansați',
+    professor: 'Dr. Mihai Ionescu',
+    faculty: 'FMI',
+    specialization: 'Informatica',
+    studyYear: '2',
+    professorRating: 5,
+    examRating: 5,
+    examDate: '2026-06-12'
+  },
+  {
+    id: 9,
+    name: 'Grafică pe Calculator (Opțional)',
+    professor: 'Dr. Elena Radu',
+    faculty: 'FMI',
+    specialization: 'Informatica',
+    studyYear: '2',
+    professorRating: 4,
+    examRating: 4,
+    examDate: '2026-06-05'
   }
 ];
 
