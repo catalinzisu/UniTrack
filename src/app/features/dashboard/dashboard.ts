@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, effect } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { SubjectService } from '../../core/services/subject.service';
@@ -34,23 +34,33 @@ export class DashboardComponent implements OnInit {
 
   user: any;
 
-  subjectsCount = computed(() => {
-    const currentUser = this.authService.currentUser();
-    if (currentUser) {
-      const personal = this.subjectService.getUserSubjects(currentUser.email);
-      if (personal) {
-        return personal.length;
+  subjectsCount = signal<number>(0);
+
+  constructor() {
+    effect(() => {
+      const user = this.authService.currentUser();
+      if (user) {
+        this.subjectService.getUserSubjects(user.email).subscribe({
+          next: (personal) => {
+            if (personal) {
+              this.subjectsCount.set(personal.length);
+            } else {
+              this.subjectService.getGlobalSubjects().subscribe(globals => {
+                const count = globals.filter(s => 
+                  s.faculty === user.faculty && 
+                  s.specialization === user.specialization && 
+                  String(s.studyYear) === String(user.studyYear)
+                ).length;
+                this.subjectsCount.set(count);
+              });
+            }
+          }
+        });
+      } else {
+        this.subjectsCount.set(0);
       }
-      
-      const globals = this.subjectService.getGlobalSubjects();
-      return globals.filter(s => 
-        s.faculty === currentUser.faculty && 
-        s.specialization === currentUser.specialization && 
-        String(s.studyYear) === String(currentUser.studyYear)
-      ).length;
-    }
-    return 0;
-  });
+    }, { allowSignalWrites: true });
+  }
 
   ngOnInit() {
     this.user = this.authService.currentUser();

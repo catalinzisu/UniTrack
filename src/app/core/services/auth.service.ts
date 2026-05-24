@@ -1,6 +1,6 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, delay, of } from 'rxjs';
+import { Observable, tap, delay, of, catchError } from 'rxjs';
 import { User } from '../models/user.model';
 
 @Injectable({
@@ -53,9 +53,12 @@ export class AuthService {
   }
 
   login(credentials: { email: string; password?: string; remember?: boolean }): Observable<any> {
-    return of(null).pipe(
-      delay(800),
-      tap(() => {
+    // Facem un request HTTP real către Fake API
+    return this.http.post(this.apiUrl, { email: credentials.email, password: credentials.password || 'password' }).pipe(
+      // ReqRes va da eroare 400 dacă user-ul nu e "eve.holt@reqres.in". 
+      // Noi prindem eroarea și simulăm un succes local ca să nu stricăm fluxul aplicației (pentru datele custom ale studenților)
+      catchError(() => of({ token: 'mock_token_fallback' }).pipe(delay(400))),
+      tap((response: any) => {
         const users = this.getRegisteredUsers();
         const foundUser = users.find(u => u.email === credentials.email);
         
@@ -78,7 +81,7 @@ export class AuthService {
         };
 
         this.currentUser.set(activeUser);
-        const token = 'mock_token_' + Date.now();
+        const token = response.token || 'mock_token_' + Date.now();
         const userStr = JSON.stringify(activeUser);
 
         if (credentials.remember) {

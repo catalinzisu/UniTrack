@@ -71,7 +71,24 @@ export class SubjectsComponent {
 
   filteredSubjects = computed(() => {
     let subjects = this.mySubjects();
+    const globals = this.globalSubjects();
     const term = this.searchTerm().toLowerCase();
+
+    // Sincronizează datele comune (nume, profesor, materiale) cu cele din catalogul global
+    // Astfel, dacă alt utilizator adaugă un material, acesta va apărea la toți!
+    subjects = subjects.map(s => {
+      const globalVer = globals.find(g => g.id === s.id);
+      if (globalVer) {
+        return { 
+          ...s, 
+          materials: globalVer.materials, 
+          name: globalVer.name, 
+          professor: globalVer.professor, 
+          examDate: globalVer.examDate 
+        };
+      }
+      return s;
+    });
 
     if (term) {
       subjects = subjects.filter(s => 
@@ -85,8 +102,23 @@ export class SubjectsComponent {
 
     if (col && order) {
       subjects = [...subjects].sort((a, b) => {
-        const valA = (a as any)[col] || '';
-        const valB = (b as any)[col] || '';
+        let valA: any = '';
+        let valB: any = '';
+
+        if (col === 'materialsCount') {
+          valA = a.materials?.length || 0;
+          valB = b.materials?.length || 0;
+        } else if (col === 'examDate') {
+          valA = a.examDate ? new Date(a.examDate).getTime() : 0;
+          valB = b.examDate ? new Date(b.examDate).getTime() : 0;
+        } else if (col === 'professorRating' || col === 'examRating') {
+          valA = (a as any)[col] || 0;
+          valB = (b as any)[col] || 0;
+        } else {
+          valA = (a as any)[col] || '';
+          valB = (b as any)[col] || '';
+        }
+
         if (valA < valB) return order === 'ascend' ? -1 : 1;
         if (valA > valB) return order === 'ascend' ? 1 : -1;
         return 0;
@@ -129,19 +161,23 @@ export class SubjectsComponent {
     effect(() => {
       const user = this.currentUser();
       if (user) {
-        this.globalSubjects.set(this.subjectService.getGlobalSubjects());
-        
-        let personal = this.subjectService.getUserSubjects(user.email);
-        if (!personal) {
-          const globals = this.globalSubjects();
-          personal = globals.filter(s => 
-            s.faculty === user.faculty && 
-            s.specialization === user.specialization && 
-            String(s.studyYear) === String(user.studyYear)
-          );
-          this.subjectService.saveUserSubjects(user.email, personal);
-        }
-        this.mySubjects.set(personal);
+        this.subjectService.getGlobalSubjects().subscribe(globals => {
+          this.globalSubjects.set(globals);
+          
+          this.subjectService.getUserSubjects(user.email).subscribe(personal => {
+            if (!personal) {
+              const myPersonal = globals.filter(s => 
+                s.faculty === user.faculty && 
+                s.specialization === user.specialization && 
+                String(s.studyYear) === String(user.studyYear)
+              );
+              this.subjectService.saveUserSubjects(user.email, myPersonal).subscribe();
+              this.mySubjects.set(myPersonal);
+            } else {
+              this.mySubjects.set(personal);
+            }
+          });
+        });
       } else {
         this.globalSubjects.set([]);
         this.mySubjects.set([]);
@@ -152,7 +188,7 @@ export class SubjectsComponent {
   saveMySubjects() {
     const user = this.currentUser();
     if (user) {
-      this.subjectService.saveUserSubjects(user.email, this.mySubjects());
+      this.subjectService.saveUserSubjects(user.email, this.mySubjects()).subscribe();
     }
   }
 
@@ -248,14 +284,15 @@ export class SubjectsComponent {
           examRating: 0
         };
 
-        const createdGlobal = this.subjectService.addGlobalSubject(newSubject as Subject);
-        this.globalSubjects.set(this.subjectService.getGlobalSubjects());
-        
-        this.mySubjects.update(list => [...list, JSON.parse(JSON.stringify(createdGlobal))]);
-        this.saveMySubjects();
+        this.subjectService.addGlobalSubject(newSubject as Subject).subscribe(createdGlobal => {
+          this.subjectService.getGlobalSubjects().subscribe(globals => this.globalSubjects.set(globals));
+          
+          this.mySubjects.update(list => [...list, JSON.parse(JSON.stringify(createdGlobal))]);
+          this.saveMySubjects();
 
-        this.message.success('Materia a fost creată și adăugată în catalog!');
-        this.isAddModalVisible.set(false);
+          this.message.success('Materia a fost creată și adăugată în catalog!');
+          this.isAddModalVisible.set(false);
+        });
       } else {
         Object.values(this.addForm.controls).forEach(control => {
           if (control.invalid) {
@@ -306,8 +343,21 @@ export class SubjectsComponent {
     if (this.editForm.valid) {
       const id = this.editingSubjectId();
       if (id) {
-        this.mySubjects.update(list => list.map(s => s.id === id ? { ...s, ...this.editForm.getRawValue() } : s));
+        const editValues = this.editForm.getRawValue();
+        
+        // 1. Actualizare detalii personale (rating-uri, comentarii) pe contul local
+        this.mySubjects.update(list => list.map(s => s.id === id ? { ...s, ...editValues } : s));
         this.saveMySubjects();
+        
+        // 2. Sincronizare materiale cu catalogul global pentru a apărea la toți
+        const globalSubject = this.globalSubjects().find(s => s.id === id);
+        if (globalSubject) {
+          const updatedGlobal = { ...globalSubject, materials: editValues.materials };
+          this.subjectService.updateGlobalSubject(updatedGlobal).subscribe(() => {
+            this.globalSubjects.update(list => list.map(s => s.id === id ? updatedGlobal : s));
+          });
+        }
+
         this.message.success('Materia a fost actualizată!');
       }
       this.isEditModalVisible.set(false);
@@ -326,6 +376,13 @@ export class SubjectsComponent {
   onProfessorRatingChange(subject: Subject, newRating: number): void {
     if (subject.id) {
       this.mySubjects.update(list => list.map(s => s.id === subject.id ? { ...s, professorRating: newRating } : s));
+      this.saveMySubjects();
+    }
+  }
+
+  onExamRatingChange(subject: Subject, newRating: number): void {
+    if (subject.id) {
+      this.mySubjects.update(list => list.map(s => s.id === subject.id ? { ...s, examRating: newRating } : s));
       this.saveMySubjects();
     }
   }

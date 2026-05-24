@@ -1,45 +1,55 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, catchError, of, map, throwError } from 'rxjs';
 import { Subject } from '../models/subject.model';
-import { MOCK_SUBJECTS } from '../mocks/mock-data';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SubjectService {
+  private apiUrl = 'http://localhost:3000';
+  private http = inject(HttpClient);
 
   constructor() {}
 
-  getGlobalSubjects(): Subject[] {
-    const saved = localStorage.getItem('unitrack_global_subjects');
-    if (saved) {
-      return JSON.parse(saved);
-    }
-    // Initialize with mock
-    localStorage.setItem('unitrack_global_subjects', JSON.stringify(MOCK_SUBJECTS));
-    return MOCK_SUBJECTS;
+  getGlobalSubjects(): Observable<Subject[]> {
+    return this.http.get<Subject[]>(`${this.apiUrl}/globalSubjects`);
   }
 
-  saveGlobalSubjects(subjects: Subject[]): void {
-    localStorage.setItem('unitrack_global_subjects', JSON.stringify(subjects));
-  }
-
-  addGlobalSubject(subject: Subject): Subject {
-    const globals = this.getGlobalSubjects();
+  addGlobalSubject(subject: Subject): Observable<Subject> {
     const newSubject = { ...subject, id: Date.now() };
-    globals.push(newSubject as Subject);
-    this.saveGlobalSubjects(globals);
-    return newSubject as Subject;
+    return this.http.post<Subject>(`${this.apiUrl}/globalSubjects`, newSubject);
   }
 
-  getUserSubjects(email: string): Subject[] | null {
-    const saved = localStorage.getItem(`unitrack_user_subjects_${email}`);
-    if (saved) {
-      return JSON.parse(saved);
-    }
-    return null;
+  updateGlobalSubject(subject: Subject): Observable<Subject> {
+    return this.http.put<Subject>(`${this.apiUrl}/globalSubjects/${subject.id}`, subject);
   }
 
-  saveUserSubjects(email: string, subjects: Subject[]): void {
-    localStorage.setItem(`unitrack_user_subjects_${email}`, JSON.stringify(subjects));
+  getUserSubjects(email: string): Observable<Subject[] | null> {
+    return this.http.get<{id: string, subjects: Subject[]}>(`${this.apiUrl}/users/${encodeURIComponent(email)}`).pipe(
+      map(user => user.subjects),
+      catchError(err => {
+        if (err.status === 404) return of(null);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  saveUserSubjects(email: string, subjects: Subject[]): Observable<any> {
+    return this.http.put(`${this.apiUrl}/users/${encodeURIComponent(email)}`, {
+      id: email,
+      subjects: subjects
+    }).pipe(
+      catchError(err => {
+        if (err.status === 404) {
+          // Creare resursă dacă nu există (POST)
+          return this.http.post(`${this.apiUrl}/users`, {
+            id: email,
+            subjects: subjects
+          });
+        }
+        return throwError(() => err);
+      })
+    );
   }
 }

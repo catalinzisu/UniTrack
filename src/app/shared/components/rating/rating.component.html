@@ -2,11 +2,11 @@
   @for (star of stars; track star) {
     <span 
       class="star" 
-      [class.filled]="star <= (hoverState || score)"
-      [class.readonly]="readOnly"
+      [class.filled]="star <= (hoverState || score())"
+      [class.readonly]="readOnly()"
       (mouseenter)="setHover(star)"
       (click)="setRating(star)">
-      <span nz-icon [nzType]="star <= (hoverState || score) ? 'star' : 'star'" [nzTheme]="star <= (hoverState || score) ? 'fill' : 'outline'"></span>
+      <span nz-icon [nzType]="star <= (hoverState || score()) ? 'star' : 'star'" [nzTheme]="star <= (hoverState || score()) ? 'fill' : 'outline'"></span>
     </span>
   }
 </div>

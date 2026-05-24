@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 
@@ -10,29 +10,28 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   styleUrl: './rating.component.scss'
 })
 export class AppRatingComponent {
-  @Input() score: number = 0;
-  @Input() readOnly: boolean = false;
-  @Output() scoreChange = new EventEmitter<number>();
+  score = input<number>(0);
+  readOnly = input<boolean>(false);
+  scoreChange = output<number>();
 
   stars: number[] = [1, 2, 3, 4, 5];
   hoverState: number = 0;
 
   setHover(rating: number) {
-    if (!this.readOnly) {
+    if (!this.readOnly()) {
       this.hoverState = rating;
     }
   }
 
   clearHover() {
-    if (!this.readOnly) {
+    if (!this.readOnly()) {
       this.hoverState = 0;
     }
   }
 
   setRating(rating: number) {
-    if (!this.readOnly) {
-      this.score = rating;
-      this.scoreChange.emit(this.score);
+    if (!this.readOnly()) {
+      this.scoreChange.emit(rating);
     }
   }
 }
