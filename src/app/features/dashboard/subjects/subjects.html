@@ -17,13 +17,13 @@
     <nz-table #basicTable [nzData]="filteredSubjects()" [nzFrontPagination]="true" [nzPageSize]="10">
       <thead>
         <tr>
-          <th [nzSortFn]="true" (nzSortOrderChange)="onSortChange('name', $event)">Materie</th>
-          <th [nzSortFn]="true" (nzSortOrderChange)="onSortChange('professor', $event)">Profesor</th>
-          <th [nzSortFn]="true" (nzSortOrderChange)="onSortChange('materialsCount', $event)">Materiale</th>
-          <th [nzSortFn]="true" (nzSortOrderChange)="onSortChange('professorRating', $event)">Rating Profesor</th>
-          <th [nzSortFn]="true" (nzSortOrderChange)="onSortChange('examRating', $event)">Rating Examen</th>
-          <th [nzSortFn]="true" (nzSortOrderChange)="onSortChange('examDate', $event)">Data Examen</th>
-          <th>Acțiuni</th>
+          <th [nzSortFn]="sortByName" (nzSortOrderChange)="onSortChange('name', $event)">Materie</th>
+          <th [nzSortFn]="sortByProfessor" (nzSortOrderChange)="onSortChange('professor', $event)">Profesor</th>
+          <th [nzSortFn]="sortByMaterialsCount" (nzSortOrderChange)="onSortChange('materialsCount', $event)">Materiale</th>
+          <th [nzSortFn]="sortByProfessorRating" (nzSortOrderChange)="onSortChange('professorRating', $event)">Rating Profesor</th>
+          <th [nzSortFn]="sortByExamRating" (nzSortOrderChange)="onSortChange('examRating', $event)">Rating Examen</th>
+          <th [nzSortFn]="sortByExamDate" (nzSortOrderChange)="onSortChange('examDate', $event)">Data Examen</th>
+          <th>Actiuni</th>
         </tr>
       </thead>
       <tbody>
