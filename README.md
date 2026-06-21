@@ -23,7 +23,7 @@ O aplicație web dedicată studenților, care centralizează materialele de curs
 * RxJS & Angular Signals
 
 ## 🚀 Cum să rulezi proiectul local
-1. Clonează repository-ul: `git clone [link-ul-tau-de-github]`
+1. Clonează repository-ul
 2. Instalează dependențele: `npm install`
 3. Pornește serverul de dezvoltare: `ng serve`
 4. Accesează aplicația în browser la adresa: `http://localhost:4200`
