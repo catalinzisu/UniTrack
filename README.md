@@ -17,7 +17,7 @@ O aplicație web dedicată studenților, care centralizează materialele de curs
 * **Reminder Sesiune (Bonus):** Calcul automat al zilelor rămase până la examen (folosind `date-fns`).
 
 ## 🛠️ Tehnologii Folosite
-* Angular 17+ (Standalone components)
+* Angular 20 (Standalone components)
 * NgZorro (UI Library)
 * Fake API (Reqres.in)
 * RxJS & Angular Signals
