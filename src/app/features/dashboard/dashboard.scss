@@ -8,13 +8,18 @@
   min-height: 100vh;
 }
 
+// Fix sidebar logo clipping on collapse
 .logo {
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   margin-bottom: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  padding: 0 12px;
   
   h1 {
     color: white;
@@ -23,6 +28,21 @@
     font-family: 'Inter', sans-serif;
     font-size: 20px;
     letter-spacing: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.2s ease, font-size 0.2s ease;
+  }
+}
+
+// When sidebar is collapsed, hide the text gracefully
+::ng-deep .ant-layout-sider-collapsed {
+  .logo {
+    padding: 0 4px;
+    
+    h1 {
+      font-size: 0;
+      opacity: 0;
+    }
   }
 }
 
@@ -42,6 +62,17 @@
       font-size: 18px;
       font-weight: 600;
       color: #333;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  @media (max-width: 576px) {
+    padding: 0 12px;
+
+    .header-content h2 {
+      font-size: 15px;
     }
   }
 }
@@ -50,6 +81,10 @@
   padding: 24px;
   background: #f0f2f5;
   min-height: calc(100vh - 64px);
+
+  @media (max-width: 576px) {
+    padding: 12px;
+  }
 }
 
 .stats-row {
@@ -74,20 +109,39 @@
     background: rgba(118, 75, 162, 0.1);
     padding: 15px;
     border-radius: 12px;
+    flex-shrink: 0;
   }
 
   .stat-info {
+    min-width: 0;
+
     h3 {
       margin: 0;
       font-size: 24px;
       font-weight: 700;
       color: #333;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     p {
       margin: 0;
       color: #666;
       font-size: 14px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    gap: 12px;
+
+    .stat-icon {
+      font-size: 28px;
+      padding: 10px;
+    }
+
+    .stat-info h3 {
+      font-size: 18px;
     }
   }
 }

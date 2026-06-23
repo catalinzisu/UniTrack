@@ -6,9 +6,11 @@
     justify-content: space-between;
     margin-bottom: 24px;
     gap: 16px;
+    flex-wrap: wrap;
 
     .search-input {
       max-width: 300px;
+      min-width: 200px;
     }
   }
 
@@ -20,5 +22,27 @@
 
   .edit-icon {
     color: #1890ff;
+  }
+
+  // Make the table scrollable horizontally on small screens
+  ::ng-deep .ant-table-wrapper {
+    overflow-x: auto;
+  }
+
+  ::ng-deep .ant-table {
+    min-width: 700px;
+  }
+
+  @media (max-width: 576px) {
+    padding: 12px;
+
+    .header-actions {
+      flex-direction: column;
+      gap: 12px;
+
+      .search-input {
+        max-width: 100%;
+      }
+    }
   }
 }

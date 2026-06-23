@@ -127,6 +127,23 @@
       "professorRating": 0,
       "examRating": 0,
       "id": 1779609263537
+    },
+    {
+      "name": "ceva",
+      "professor": "ceva",
+      "examDate": "2025-06-25",
+      "materials": [
+        {
+          "name": "rcsp",
+          "url": "https://docs.google.com/spreadsheets/d/1hPhjaAR2dgxZsG0GKprx7p9pMbJGfr3R-Co5oDQhawA/edit?gid=1942492373#gid=1942492373"
+        }
+      ],
+      "faculty": "FMI",
+      "specialization": "Informatica",
+      "studyYear": "2",
+      "professorRating": 0,
+      "examRating": 0,
+      "id": 1782236921080
     }
   ],
   "users": [
@@ -138,88 +155,21 @@
       "id": "cata@student.unibv.ro",
       "subjects": [
         {
-          "id": 2,
-          "name": "Baze de Date",
-          "professor": "Dr. Maria Ionescu",
-          "faculty": "FMI",
-          "specialization": "Informatica",
-          "studyYear": "2",
-          "professorRating": 5,
-          "examRating": 4,
-          "examDate": "2026-06-20"
-        },
-        {
-          "id": 6,
-          "name": "Dezvoltare Web cu Angular",
-          "professor": "Dr. Cătălin Zisu",
-          "faculty": "FMI",
-          "specialization": "Informatica",
-          "studyYear": "2",
-          "professorRating": 5,
-          "examRating": 4,
-          "examDate": "2026-06-28"
-        },
-        {
-          "id": 7,
-          "name": "Securitate Cibernetică",
-          "professor": "Dr. Alex Popescu",
-          "faculty": "FMI",
-          "specialization": "Informatica",
-          "studyYear": "2",
-          "professorRating": 4,
-          "examRating": 3,
-          "examDate": "2026-06-30"
-        },
-        {
-          "id": 8,
-          "name": "Algoritmi Avansați",
-          "professor": "Dr. Mihai Ionescu",
-          "faculty": "FMI",
-          "specialization": "Informatica",
-          "studyYear": "2",
-          "professorRating": 5,
-          "examRating": 5,
-          "examDate": "2026-06-12"
-        },
-        {
-          "id": 9,
-          "name": "Grafică pe Calculator (Opțional)",
-          "professor": "Dr. Elena Radu",
-          "faculty": "FMI",
-          "specialization": "Informatica",
-          "studyYear": "2",
-          "professorRating": 4,
-          "examRating": 4,
-          "examDate": "2026-06-05"
-        },
-        {
-          "name": "Devops",
-          "professor": "andreiutz",
-          "examDate": "2026-06-07",
+          "name": "ceva",
+          "professor": "ceva",
+          "examDate": "2025-06-25",
           "materials": [
             {
-              "name": "programare",
+              "name": "rcsp",
               "url": "https://docs.google.com/spreadsheets/d/1hPhjaAR2dgxZsG0GKprx7p9pMbJGfr3R-Co5oDQhawA/edit?gid=1942492373#gid=1942492373"
             }
           ],
           "faculty": "FMI",
           "specialization": "Informatica",
           "studyYear": "2",
-          "professorRating": 3,
+          "professorRating": 0,
           "examRating": 0,
-          "id": 1779609199927,
-          "comment": "ceva"
-        },
-        {
-          "id": 1,
-          "name": "Programare Orientată pe Obiecte",
-          "professor": "Dr. Ion Popescu",
-          "faculty": "FMI",
-          "specialization": "Informatica",
-          "studyYear": "1",
-          "professorRating": 4,
-          "examRating": 3,
-          "examDate": "2026-06-15"
+          "id": 1782236921080
         }
       ]
     },
@@ -309,6 +259,134 @@
           "professorRating": 2,
           "examRating": 2,
           "id": 1779609263537
+        }
+      ]
+    },
+    {
+      "id": "catalinzisu@student.unibv.ro",
+      "subjects": [
+        {
+          "id": 2,
+          "name": "Baze de Date",
+          "professor": "Dr. Maria Ionescu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "2",
+          "professorRating": 5,
+          "examRating": 2,
+          "examDate": "2026-06-20"
+        },
+        {
+          "id": 6,
+          "name": "Dezvoltare Web cu Angular",
+          "professor": "Dr. Cătălin Zisu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "2",
+          "professorRating": 3,
+          "examRating": 4,
+          "examDate": "2026-06-28"
+        },
+        {
+          "id": 7,
+          "name": "Securitate Cibernetică",
+          "professor": "Dr. Alex Popescu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "2",
+          "professorRating": 4,
+          "examRating": 3,
+          "examDate": "2026-06-30"
+        },
+        {
+          "id": 8,
+          "name": "Algoritmi Avansați",
+          "professor": "Dr. Mihai Ionescu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "2",
+          "professorRating": 5,
+          "examRating": 5,
+          "examDate": "2026-06-12"
+        },
+        {
+          "id": 9,
+          "name": "Grafică pe Calculator (Opțional)",
+          "professor": "Dr. Elena Radu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "2",
+          "professorRating": 4,
+          "examRating": 4,
+          "examDate": "2026-06-05"
+        },
+        {
+          "name": "Devops",
+          "professor": "andreiutz",
+          "examDate": "2026-06-07",
+          "materials": [
+            {
+              "name": "programare",
+              "url": "https://docs.google.com/spreadsheets/d/1hPhjaAR2dgxZsG0GKprx7p9pMbJGfr3R-Co5oDQhawA/edit?gid=1942492373#gid=1942492373"
+            }
+          ],
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "2",
+          "professorRating": 3,
+          "examRating": 5,
+          "id": 1779609199927
+        },
+        {
+          "name": "ceva",
+          "professor": "cv",
+          "examDate": "2005-02-22",
+          "materials": [],
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "2",
+          "professorRating": 3,
+          "examRating": 0,
+          "id": 1779609263537
+        },
+        {
+          "name": "ceva",
+          "professor": "ceva",
+          "examDate": "2025-06-25",
+          "materials": [
+            {
+              "name": "rcsp",
+              "url": "https://docs.google.com/spreadsheets/d/1hPhjaAR2dgxZsG0GKprx7p9pMbJGfr3R-Co5oDQhawA/edit?gid=1942492373#gid=1942492373"
+            }
+          ],
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "2",
+          "professorRating": 0,
+          "examRating": 0,
+          "id": 1782236921080
+        },
+        {
+          "id": 1,
+          "name": "Programare Orientată pe Obiecte",
+          "professor": "Dr. Ion Popescu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "1",
+          "professorRating": 4,
+          "examRating": 3,
+          "examDate": "2026-06-15"
+        },
+        {
+          "id": 3,
+          "name": "Rețele de Calculatoare",
+          "professor": "Dr. Andrei Popa",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "3",
+          "professorRating": 3,
+          "examRating": 2,
+          "examDate": "2026-06-10"
         }
       ]
     }

@@ -69,6 +69,15 @@ export class SubjectsComponent {
   sortColumn = signal<string | null>(null);
   sortOrder = signal<string | null>(null);
 
+  // Sort comparator functions for nz-table columns
+  sortByName = (a: Subject, b: Subject): number => (a.name || '').localeCompare(b.name || '');
+  sortByProfessor = (a: Subject, b: Subject): number => (a.professor || '').localeCompare(b.professor || '');
+  sortByMaterialsCount = (a: Subject, b: Subject): number => (a.materials?.length || 0) - (b.materials?.length || 0);
+  sortByProfessorRating = (a: Subject, b: Subject): number => (a.professorRating || 0) - (b.professorRating || 0);
+  sortByExamRating = (a: Subject, b: Subject): number => (a.examRating || 0) - (b.examRating || 0);
+  sortByExamDate = (a: Subject, b: Subject): number =>
+    (a.examDate ? new Date(a.examDate).getTime() : 0) - (b.examDate ? new Date(b.examDate).getTime() : 0);
+
   filteredSubjects = computed(() => {
     let subjects = this.mySubjects();
     const globals = this.globalSubjects();
@@ -284,14 +293,20 @@ export class SubjectsComponent {
           examRating: 0
         };
 
-        this.subjectService.addGlobalSubject(newSubject as Subject).subscribe(createdGlobal => {
-          this.subjectService.getGlobalSubjects().subscribe(globals => this.globalSubjects.set(globals));
-          
-          this.mySubjects.update(list => [...list, JSON.parse(JSON.stringify(createdGlobal))]);
-          this.saveMySubjects();
+        this.subjectService.addGlobalSubject(newSubject as Subject).subscribe({
+          next: (createdGlobal) => {
+            this.subjectService.getGlobalSubjects().subscribe(globals => this.globalSubjects.set(globals));
+            
+            this.mySubjects.update(list => [...list, JSON.parse(JSON.stringify(createdGlobal))]);
+            this.saveMySubjects();
 
-          this.message.success('Materia a fost creată și adăugată în catalog!');
-          this.isAddModalVisible.set(false);
+            this.message.success('Materia a fost creată și adăugată în catalog!');
+            this.isAddModalVisible.set(false);
+          },
+          error: (err) => {
+            console.error('Error adding subject:', err);
+            this.message.error('Eroare la crearea materiei. Verificați dacă serverul (json-server) rulează.');
+          }
         });
       } else {
         Object.values(this.addForm.controls).forEach(control => {

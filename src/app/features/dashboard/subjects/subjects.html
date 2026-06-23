@@ -14,7 +14,7 @@
       </button>
     </div>
 
-    <nz-table #basicTable [nzData]="filteredSubjects()" [nzFrontPagination]="true" [nzPageSize]="10">
+    <nz-table #basicTable [nzData]="filteredSubjects()" [nzShowPagination]="false">
       <thead>
         <tr>
           <th [nzSortFn]="sortByName" (nzSortOrderChange)="onSortChange('name', $event)">Materie</th>

@@ -9,6 +9,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { CommonModule } from '@angular/common';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +22,8 @@ import { CommonModule } from '@angular/common';
     NzInputModule,
     NzButtonModule,
     NzCheckboxModule,
-    NzGridModule
+    NzGridModule,
+    NzIconModule
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss'

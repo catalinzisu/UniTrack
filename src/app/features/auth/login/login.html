@@ -1,16 +1,21 @@
 <div class="split-layout">
   <div class="form-side">
     <div class="auth-card">
+      <div class="brand-mark">
+        <span nz-icon nzType="book" nzTheme="fill" class="brand-icon"></span>
+        <span class="brand-name">UniTrack</span>
+      </div>
+
       <div class="auth-header">
         <h2>Welcome Back!</h2>
-        <p>Log in to UniTrack</p>
+        <p>Sign in to continue your academic journey</p>
       </div>
 
       <form nz-form [formGroup]="loginForm" (ngSubmit)="submitForm()" nzLayout="vertical">
         <nz-form-item>
           <nz-form-label>Email</nz-form-label>
           <nz-form-control nzErrorTip="Please input a valid email!">
-            <input type="email" nz-input formControlName="email" placeholder="student@university.ro" />
+            <input type="email" nz-input formControlName="email" placeholder="student&#64;university.ro" />
           </nz-form-control>
         </nz-form-item>
 
@@ -21,28 +26,40 @@
           </nz-form-control>
         </nz-form-item>
 
-        <div class="login-form-margin" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div class="form-options">
           <label nz-checkbox formControlName="remember">
             <span>Remember me</span>
           </label>
-
         </div>
 
         <button nz-button class="login-form-button" [nzType]="'primary'" [nzLoading]="isLoading" nzBlock>
-          Log in
+          Sign In
         </button>
 
         <div class="register-link">
-          Don't have an account? <a routerLink="/auth/register">Register now!</a>
+          Don't have an account? <a routerLink="/auth/register">Create one now</a>
         </div>
       </form>
     </div>
   </div>
   
   <div class="visual-side">
+    <!-- Animated floating shapes -->
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+
     <div class="visual-content">
-      <h1>Your academic journey,<br>simplified.</h1>
-      <p>Manage all your subjects, track exams, and rate professors in one beautifully designed platform.</p>
+      <div class="visual-badge">🎓 Student Platform</div>
+      <h1>Your academic<br>journey, simplified.</h1>
+      <p>Manage subjects, track exams, and rate professors — all in one beautifully crafted platform.</p>
+
+      <div class="feature-pills">
+        <span class="pill">📚 Track Subjects</span>
+        <span class="pill">📅 Exam Dates</span>
+        <span class="pill">⭐ Rate Professors</span>
+      </div>
     </div>
   </div>
 </div>
