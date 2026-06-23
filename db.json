@@ -20,7 +20,25 @@
       "studyYear": "2",
       "professorRating": 5,
       "examRating": 4,
-      "examDate": "2026-06-20"
+      "examDate": "2026-06-20",
+      "materials": [],
+      "globalComments": [
+        {
+          "username": "Catalin Zisu",
+          "text": "e greu trebuie invatat din timp spor !",
+          "date": "2026-06-23T19:00:18.409Z"
+        },
+        {
+          "username": "c z",
+          "text": "mersi o sa ma apuc",
+          "date": "2026-06-23T19:01:08.537Z"
+        },
+        {
+          "username": "Cz cz",
+          "text": "mersi o sa ma apuc si eu",
+          "date": "2026-06-23T19:02:23.642Z"
+        }
+      ]
     },
     {
       "id": 3,
@@ -144,6 +162,18 @@
       "professorRating": 0,
       "examRating": 0,
       "id": 1782236921080
+    },
+    {
+      "name": "analiza matematica",
+      "professor": "Fulga",
+      "examDate": "2026-02-05",
+      "materials": [],
+      "faculty": "FMI",
+      "specialization": "Informatica",
+      "studyYear": "1",
+      "professorRating": 0,
+      "examRating": 0,
+      "id": 1782239123335
     }
   ],
   "users": [
@@ -387,6 +417,141 @@
           "professorRating": 3,
           "examRating": 2,
           "examDate": "2026-06-10"
+        },
+        {
+          "name": "analiza matematica",
+          "professor": "Fulga",
+          "examDate": "2026-02-05",
+          "materials": [],
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "1",
+          "professorRating": 0,
+          "examRating": 0,
+          "id": 1782239123335
+        }
+      ]
+    },
+    {
+      "id": "catazis@student.unibv.ro",
+      "subjects": []
+    },
+    {
+      "id": "cz@student.unibv.ro",
+      "subjects": [
+        {
+          "id": 1,
+          "name": "Programare Orientată pe Obiecte",
+          "professor": "Dr. Ion Popescu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "1",
+          "professorRating": 4,
+          "examRating": 3,
+          "examDate": "2026-06-15"
+        },
+        {
+          "name": "analiza matematica",
+          "professor": "Fulga",
+          "examDate": "2026-02-05",
+          "materials": [],
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "1",
+          "professorRating": 0,
+          "examRating": 0,
+          "id": 1782239123335
+        },
+        {
+          "id": 2,
+          "name": "Baze de Date",
+          "professor": "Dr. Maria Ionescu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "2",
+          "professorRating": 5,
+          "examRating": 5,
+          "examDate": "2026-06-20",
+          "materials": [],
+          "comment": "e fain"
+        },
+        {
+          "id": 6,
+          "name": "Dezvoltare Web cu Angular",
+          "professor": "Dr. Cătălin Zisu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "2",
+          "professorRating": 5,
+          "examRating": 4,
+          "examDate": "2026-06-28"
+        },
+        {
+          "id": 8,
+          "name": "Algoritmi Avansați",
+          "professor": "Dr. Mihai Ionescu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "2",
+          "professorRating": 5,
+          "examRating": 5,
+          "examDate": "2026-06-12"
+        }
+      ]
+    },
+    {
+      "id": "czcz@student.unibv.ro",
+      "subjects": [
+        {
+          "id": 1,
+          "name": "Programare Orientată pe Obiecte",
+          "professor": "Dr. Ion Popescu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "1",
+          "professorRating": 4,
+          "examRating": 3,
+          "examDate": "2026-06-15"
+        },
+        {
+          "name": "analiza matematica",
+          "professor": "Fulga",
+          "examDate": "2026-02-05",
+          "materials": [],
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "1",
+          "professorRating": 0,
+          "examRating": 0,
+          "id": 1782239123335
+        }
+      ]
+    },
+    {
+      "id": "av@student.unibv.ro",
+      "subjects": [
+        {
+          "id": 1,
+          "name": "Programare Orientată pe Obiecte",
+          "professor": "Dr. Ion Popescu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "1",
+          "professorRating": 4,
+          "examRating": 3,
+          "examDate": "2026-06-15"
+        },
+        {
+          "name": "analiza matematica",
+          "professor": "Fulga",
+          "examDate": "2026-02-05",
+          "materials": [],
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "1",
+          "professorRating": 0,
+          "examRating": 0,
+          "id": 1782239123335
         }
       ]
     }

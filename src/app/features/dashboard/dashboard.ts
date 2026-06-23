@@ -33,33 +33,9 @@ export class DashboardComponent {
   private router = inject(Router);
 
   user = this.authService.currentUser;
-  subjectsCount = signal<number>(0);
+  subjectsCount = this.subjectService.currentFilteredCount;
 
-  constructor() {
-    effect(() => {
-      const user = this.authService.currentUser();
-      if (user) {
-        this.subjectService.getUserSubjects(user.email).subscribe({
-          next: (personal) => {
-            if (personal) {
-              this.subjectsCount.set(personal.length);
-            } else {
-              this.subjectService.getGlobalSubjects().subscribe(globals => {
-                const count = globals.filter(s => 
-                  s.faculty === user.faculty && 
-                  s.specialization === user.specialization && 
-                  String(s.studyYear) === String(user.studyYear)
-                ).length;
-                this.subjectsCount.set(count);
-              });
-            }
-          }
-        });
-      } else {
-        this.subjectsCount.set(0);
-      }
-    }, { allowSignalWrites: true });
-  }
+  constructor() {}
 
 
   logout() {

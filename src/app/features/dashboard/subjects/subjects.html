@@ -45,15 +45,17 @@
               }
             </td>
             <td>
-              <!-- Inline edit for professor rating -->
-              <app-rating [score]="data.professorRating || 0" (scoreChange)="onProfessorRatingChange(data, $event)"></app-rating>
+              <div nz-tooltip [nzTooltipTitle]="'Nota medie calculată: ' + getAverageProfessorRating(data)">
+                <nz-rate [ngModel]="getAverageProfessorRating(data)" nzDisabled nzAllowHalf></nz-rate>
+              </div>
             </td>
             <td>
               @if (isExamPending(data.examDate)) {
                 <nz-tag nzColor="default">În așteptare</nz-tag>
               } @else {
-                <!-- Exam rating shown if examDate < today -->
-                <app-rating [score]="data.examRating || 0" (scoreChange)="onExamRatingChange(data, $event)"></app-rating>
+                <div nz-tooltip [nzTooltipTitle]="'Nota medie calculată: ' + getAverageExamRating(data)">
+                  <nz-rate [ngModel]="getAverageExamRating(data)" nzDisabled nzAllowHalf></nz-rate>
+                </div>
               }
             </td>
             <td>{{ data.examDate | daysUntil }}</td>
@@ -175,12 +177,29 @@
         <span nz-icon nzType="plus"></span> Adaugă Material
       </button>
 
-      <nz-form-item>
-        <nz-form-label>Comentariu</nz-form-label>
-        <nz-form-control>
-          <textarea nz-input formControlName="comment" placeholder="Notițe despre materie" rows="3"></textarea>
-        </nz-form-control>
-      </nz-form-item>
+      <nz-divider nzText="Discuții Grup"></nz-divider>
+      
+      <div style="max-height: 250px; overflow-y: auto; background: #f9fafb; padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+        @for (c of getEditingSubject()?.globalComments || []; track $index) {
+          <div style="margin-bottom: 12px; background: white; padding: 8px 12px; border-radius: 6px; border: 1px solid #e5e7eb;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+              <span style="font-weight: 600; font-size: 13px; color: #374151;">{{ c.username }}</span>
+              <span style="font-size: 12px; color: #9ca3af;">{{ c.date | date:'short' }}</span>
+            </div>
+            <p style="margin: 0; font-size: 14px; color: #4b5563;">{{ c.text }}</p>
+          </div>
+        }
+        @if (!getEditingSubject()?.globalComments?.length) {
+          <p style="text-align: center; color: #9ca3af; margin: 0; padding: 20px 0;">Fii primul care lasă un mesaj!</p>
+        }
+      </div>
+
+      <div style="display: flex; gap: 8px; margin-bottom: 24px;">
+        <input nz-input [ngModel]="newCommentText()" (ngModelChange)="newCommentText.set($event)" [ngModelOptions]="{standalone: true}" placeholder="Scrie un mesaj colegilor tăi..." style="flex: 1;" (keyup.enter)="addGlobalComment()" />
+        <button nz-button nzType="primary" (click)="addGlobalComment()" type="button" [disabled]="!newCommentText().trim()">
+          <span nz-icon nzType="send"></span> Trimite
+        </button>
+      </div>
 
       <nz-form-item>
         <nz-form-label>Rating Profesor</nz-form-label>

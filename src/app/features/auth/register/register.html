@@ -65,9 +65,11 @@
           <div nz-col nzSpan="12">
             <nz-form-item>
               <nz-form-label nzRequired>Specialization</nz-form-label>
-              <nz-form-control nzErrorTip="Select specialization!">
-                <nz-select formControlName="specialization" nzPlaceHolder="Select">
-                  <nz-option *ngFor="let spec of specializations" [nzValue]="spec" [nzLabel]="spec"></nz-option>
+              <nz-form-control nzErrorTip="Please select your specialization!">
+                <nz-select formControlName="specialization" nzPlaceHolder="Select specialization" [nzDisabled]="!availableSpecializations.length">
+                  @for (spec of availableSpecializations; track spec) {
+                    <nz-option [nzValue]="spec" [nzLabel]="spec"></nz-option>
+                  }
                 </nz-select>
               </nz-form-control>
             </nz-form-item>

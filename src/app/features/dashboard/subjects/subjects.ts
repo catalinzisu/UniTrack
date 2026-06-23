@@ -44,7 +44,6 @@ import { Subject } from '../../../core/models/subject.model';
     NzToolTipModule,
     NzRateModule,
     NzSelectModule,
-    AppRatingComponent,
     DaysUntilPipe
   ],
   templateUrl: './subjects.html',
@@ -93,11 +92,20 @@ export class SubjectsComponent {
           materials: globalVer.materials, 
           name: globalVer.name, 
           professor: globalVer.professor, 
-          examDate: globalVer.examDate 
+          examDate: globalVer.examDate,
+          globalProfessorRating: globalVer.professorRating || 0,
+          globalExamRating: globalVer.examRating || 0,
+          globalComments: globalVer.globalComments || []
         };
       }
       return s;
     });
+
+    // Filter by user's current study year
+    const user = this.currentUser();
+    if (user && user.studyYear) {
+      subjects = subjects.filter(s => String(s.studyYear) === String(user.studyYear));
+    }
 
     if (term) {
       subjects = subjects.filter(s => 
@@ -138,13 +146,28 @@ export class SubjectsComponent {
   });
 
   availableGlobalSubjects = computed(() => {
+    const user = this.currentUser();
     const myIds = this.mySubjects().map(s => s.id);
-    return this.globalSubjects().filter(s => !myIds.includes(s.id));
+    return this.globalSubjects().filter(s => {
+      if (myIds.includes(s.id)) return false;
+      if (!user) return true;
+      return s.faculty === user.faculty && 
+             s.specialization === user.specialization && 
+             String(s.studyYear) === String(user.studyYear);
+    });
   });
 
   isAddModalVisible = signal(false);
   isEditModalVisible = signal(false);
   editingSubjectId = signal<number | null>(null);
+
+  getEditingSubject = computed(() => {
+    const id = this.editingSubjectId();
+    if (!id) return null;
+    return this.filteredSubjects().find(s => s.id === id) || null;
+  });
+
+  newCommentText = signal('');
 
   isPreviewVisible = signal(false);
   previewUrl = signal<SafeResourceUrl | null>(null);
@@ -191,6 +214,10 @@ export class SubjectsComponent {
         this.globalSubjects.set([]);
         this.mySubjects.set([]);
       }
+    }, { allowSignalWrites: true });
+
+    effect(() => {
+      this.subjectService.currentFilteredCount.set(this.filteredSubjects().length);
     }, { allowSignalWrites: true });
   }
 
@@ -388,17 +415,51 @@ export class SubjectsComponent {
     }
   }
 
-  onProfessorRatingChange(subject: Subject, newRating: number): void {
-    if (subject.id) {
-      this.mySubjects.update(list => list.map(s => s.id === subject.id ? { ...s, professorRating: newRating } : s));
-      this.saveMySubjects();
+  getAverageProfessorRating(subject: Subject): number {
+    const globalRating = subject.globalProfessorRating || 0;
+    const personalRating = subject.professorRating || 0;
+    
+    if (personalRating > 0 && globalRating > 0) {
+      return (globalRating + personalRating) / 2;
     }
+    return personalRating > 0 ? personalRating : globalRating;
   }
 
-  onExamRatingChange(subject: Subject, newRating: number): void {
-    if (subject.id) {
-      this.mySubjects.update(list => list.map(s => s.id === subject.id ? { ...s, examRating: newRating } : s));
-      this.saveMySubjects();
+  getAverageExamRating(subject: Subject): number {
+    const globalRating = subject.globalExamRating || 0;
+    const personalRating = subject.examRating || 0;
+    
+    if (personalRating > 0 && globalRating > 0) {
+      return (globalRating + personalRating) / 2;
     }
+    return personalRating > 0 ? personalRating : globalRating;
+  }
+
+  addGlobalComment(): void {
+    const text = this.newCommentText().trim();
+    if (!text) return;
+
+    const subjectId = this.editingSubjectId();
+    if (!subjectId) return;
+
+    const globalVer = this.globalSubjects().find(g => g.id === subjectId);
+    if (!globalVer) return;
+
+    const user = this.currentUser();
+    const newComment = {
+      username: user ? `${user.firstName} ${user.lastName}` : 'Anonymous',
+      text: text,
+      date: new Date().toISOString()
+    };
+
+    const updatedGlobal = {
+      ...globalVer,
+      globalComments: [...(globalVer.globalComments || []), newComment]
+    };
+
+    this.subjectService.updateGlobalSubject(updatedGlobal).subscribe(() => {
+      this.globalSubjects.update(list => list.map(s => s.id === updatedGlobal.id ? updatedGlobal : s));
+      this.newCommentText.set('');
+    });
   }
 }

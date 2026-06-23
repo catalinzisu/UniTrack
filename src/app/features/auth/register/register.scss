@@ -1,64 +1,90 @@
+// Ensure the component itself fills its parent completely
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
 .split-layout {
   display: flex;
   min-height: 100vh;
   width: 100%;
+
+  // On small screens, stack vertically
+  @media (max-width: 991px) {
+    flex-direction: column;
+  }
 }
 
+// ── Form Side ──
 .form-side {
-  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 40px;
   background-color: #fff;
   
+  // On large screens: fixed width for form, rest goes to visual
   @media (min-width: 992px) {
-    width: 50%;
+    width: 480px; // Slightly wider for register form
+    min-width: 480px;
+    flex-shrink: 0;
+  }
+
+  // On small screens: full width, give it breathing room
+  @media (max-width: 991px) {
+    width: 100%;
+    padding: 32px 24px;
+    min-height: auto;
   }
 }
 
 .auth-card {
   width: 100%;
-  max-width: 500px;
+  max-width: 420px;
 }
 
 .auth-header {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
   
   h2 {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 700;
-    color: #1a1a1a;
+    color: #1a1a2e;
     margin-bottom: 8px;
     font-family: 'Inter', sans-serif;
   }
   
   p {
-    color: #666;
-    font-size: 16px;
+    color: #6b7280;
+    font-size: 15px;
     margin: 0;
   }
 }
 
 .register-form-button {
   height: 48px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 600;
   font-size: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  margin-top: 10px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border: none;
-  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.35);
+  transition: all 0.3s ease;
   
   &:hover {
     background: linear-gradient(135deg, #5a70d6 0%, #633f88 100%);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    transform: translateY(-1px);
   }
 }
 
 .login-link {
   text-align: center;
-  font-size: 15px;
-  color: #666;
+  font-size: 14px;
+  color: #6b7280;
   
   a {
     color: #764ba2;
@@ -71,52 +97,82 @@
   }
 }
 
+// ── Visual Side ──
+// Always visible, fills remaining space on desktop, stacks below on mobile
 .visual-side {
-  display: none;
-  
-  @media (min-width: 992px) {
-    display: flex;
-    width: 50%;
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    position: relative;
-    justify-content: center;
-    align-items: center;
-    padding: 60px;
+  display: flex;
+  flex: 1 1 0%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #5b2d8e 100%);
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  padding: 60px;
+  overflow: hidden;
+
+  // On small screens: stack below, reduce padding
+  @media (max-width: 991px) {
+    padding: 40px 24px;
+    min-height: 300px;
+    flex: none;
   }
 }
 
 .visual-content {
   color: white;
-  max-width: 600px;
-  
+  max-width: 480px;
+  position: relative;
+  z-index: 1;
+
   h1 {
     color: white;
-    font-size: 56px;
+    font-size: 44px;
     font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 24px;
+    line-height: 1.15;
+    margin-bottom: 20px;
     font-family: 'Inter', sans-serif;
+    letter-spacing: -0.5px;
+    
+    @media (max-width: 991px) {
+      font-size: 32px;
+      margin-bottom: 14px;
+    }
   }
   
   p {
-    font-size: 20px;
-    line-height: 1.6;
-    opacity: 0.9;
+    font-size: 16px;
+    line-height: 1.7;
+    opacity: 0.85;
+    margin-bottom: 36px;
+    
+    @media (max-width: 991px) {
+      font-size: 15px;
+      margin-bottom: 24px;
+    }
   }
 }
 
+// ── Form input styling ──
 ::ng-deep .ant-form-item-label > label {
   font-weight: 500;
-  color: #333;
+  color: #374151;
+  font-size: 13px;
 }
 
-::ng-deep .ant-input {
-  padding: 10px 16px;
-  border-radius: 8px;
+::ng-deep .ant-form-item {
+  margin-bottom: 16px;
 }
-::ng-deep .ant-select-selector {
+
+::ng-deep .ant-input, ::ng-deep .ant-select-selector {
   border-radius: 8px !important;
-  height: 44px !important;
-  display: flex;
-  align-items: center;
+  border: 1.5px solid #e5e7eb !important;
+  transition: all 0.2s ease !important;
+
+  &:hover {
+    border-color: #764ba2 !important;
+  }
+
+  &:focus, &-focused {
+    border-color: #764ba2 !important;
+    box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1) !important;
+  }
 }

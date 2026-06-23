@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -26,7 +26,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './register.html',
   styleUrl: './register.scss'
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   isLoading = false;
 
@@ -34,8 +34,19 @@ export class RegisterComponent {
   private router = inject(Router);
   private msg = inject(NzMessageService);
 
-  faculties = ['FMI', 'FSEGA', 'Litere', 'Drept', 'Medicina'];
-  specializations = ['Informatica', 'Matematica', 'Cibernetica', 'Drept Penal', 'Medicina Generala'];
+  facultySpecializations: Record<string, string[]> = {
+    'FMI': ['Informatica', 'Matematica', 'Informatica Aplicata'],
+    'FSEGA': ['Cibernetica', 'Contabilitate', 'Management'],
+    'Litere': ['Limba si Literatura', 'Studii Culturale'],
+    'Drept': ['Drept Penal', 'Drept Civil'],
+    'Medicina': ['Medicina Generala', 'Stomatologie']
+  };
+
+  get faculties() {
+    return Object.keys(this.facultySpecializations);
+  }
+
+  availableSpecializations: string[] = [];
   studyYears = ['1', '2', '3', '4', '5', '6', 'Master 1', 'Master 2'];
 
   constructor(private fb: FormBuilder) {
@@ -50,6 +61,14 @@ export class RegisterComponent {
       studyYear: [null, [Validators.required]]
     }, {
       validators: this.passwordMatchValidator
+    });
+  }
+
+  ngOnInit() {
+    this.registerForm.get('faculty')?.valueChanges.subscribe(faculty => {
+      this.availableSpecializations = faculty ? this.facultySpecializations[faculty] : [];
+      this.registerForm.get('specialization')?.setValue(null);
+      this.registerForm.get('studyYear')?.setValue('1');
     });
   }
 

@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, of, map, throwError } from 'rxjs';
 import { Subject } from '../models/subject.model';
@@ -9,6 +9,8 @@ import { Subject } from '../models/subject.model';
 export class SubjectService {
   private apiUrl = 'http://localhost:3000';
   private http = inject(HttpClient);
+
+  currentFilteredCount = signal<number>(0);
 
   constructor() {}
 
@@ -42,12 +44,20 @@ export class SubjectService {
     }).pipe(
       catchError(err => {
         if (err.status === 404) {
-          // Creare resursă dacă nu există (POST)
           return this.http.post(`${this.apiUrl}/users`, {
             id: email,
             subjects: subjects
           });
         }
+        return throwError(() => err);
+      })
+    );
+  }
+
+  deleteUserSubjects(email: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/users/${encodeURIComponent(email)}`).pipe(
+      catchError(err => {
+        if (err.status === 404) return of(null); // Ignore if already not found
         return throwError(() => err);
       })
     );
