@@ -554,6 +554,34 @@
           "id": 1782239123335
         }
       ]
+    },
+    {
+      "id": "cz@student.unitbv.ro",
+      "subjects": [
+        {
+          "id": 1,
+          "name": "Programare Orientată pe Obiecte",
+          "professor": "Dr. Ion Popescu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "1",
+          "professorRating": 4,
+          "examRating": 3,
+          "examDate": "2026-06-15"
+        },
+        {
+          "name": "analiza matematica",
+          "professor": "Fulga",
+          "examDate": "2026-02-05",
+          "materials": [],
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "1",
+          "professorRating": 0,
+          "examRating": 0,
+          "id": 1782239123335
+        }
+      ]
     }
   ]
 }

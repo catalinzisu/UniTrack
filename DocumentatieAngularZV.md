@@ -36,7 +36,7 @@ Tabelul suporta sortare pe fiecare coloana si filtrare prin searchbar dupa nume 
 
 ### Componenta de rating
 
-Rating-ul este implementat ca o componenta separata (AppRatingComponent) cu noua sintaxa Angular (input/output signals). Afiseaza 5 stelute interactive si este reutilizata in tabel pentru ratingul profesorului si al examenului.
+Rating-ul este implementat ca o componenta separata (AppRatingComponent) cu noua sintaxa Angular (input/output signals). Afiseaza 5 stelute interactive si este reutilizata in tabel pentru ratingul profesorului si al examenului. De asemenea, in tabel se calculeaza si se afiseaza media intre ratingul global si ratingul personal acordat de utilizator (in cazul in care ambele exista; altfel se afiseaza cel disponibil).
 
 ### Profilul utilizatorului
 

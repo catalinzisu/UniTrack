@@ -9,6 +9,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { CommonModule } from '@angular/common';
+import { CustomValidators } from '../../../shared/validators/custom-validators';
 
 @Component({
   selector: 'app-register',
@@ -51,8 +52,8 @@ export class RegisterComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {
     this.registerForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      email: ['', [Validators.required, Validators.email, CustomValidators.studentEmail()]],
+      password: ['', [Validators.required, Validators.minLength(6), CustomValidators.strongPassword()]],
       confirmPassword: ['', [Validators.required]],
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
@@ -60,7 +61,7 @@ export class RegisterComponent implements OnInit {
       specialization: [null, [Validators.required]],
       studyYear: [null, [Validators.required]]
     }, {
-      validators: this.passwordMatchValidator
+      validators: CustomValidators.matchPasswords('password', 'confirmPassword')
     });
   }
 
@@ -72,10 +73,7 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  passwordMatchValidator(g: FormGroup) {
-    return g.get('password')?.value === g.get('confirmPassword')?.value
-      ? null : { passwordsMismatch: true };
-  }
+
 
   submitForm(): void {
     if (this.registerForm.valid) {

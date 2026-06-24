@@ -28,8 +28,13 @@
 
         <nz-form-item>
           <nz-form-label nzRequired>Student Email</nz-form-label>
-          <nz-form-control nzErrorTip="Valid email required">
+          <nz-form-control [nzErrorTip]="emailErrorTpl">
             <input type="email" nz-input formControlName="email" placeholder="john.doe@student.unitbv.ro" />
+            <ng-template #emailErrorTpl let-control>
+              <ng-container *ngIf="control.hasError('required')">Valid email required!</ng-container>
+              <ng-container *ngIf="control.hasError('email')">The input is not valid E-mail!</ng-container>
+              <ng-container *ngIf="control.hasError('studentEmail')">You must use an institutional email (@student.uni.ro or @student.unitbv.ro).</ng-container>
+            </ng-template>
           </nz-form-control>
         </nz-form-item>
 
@@ -37,8 +42,13 @@
           <div nz-col nzSpan="12">
             <nz-form-item>
               <nz-form-label nzRequired>Password</nz-form-label>
-              <nz-form-control nzErrorTip="Min 6 chars required.">
+              <nz-form-control [nzErrorTip]="passwordErrorTpl">
                 <input type="password" nz-input formControlName="password" placeholder="Password" />
+                <ng-template #passwordErrorTpl let-control>
+                  <ng-container *ngIf="control.hasError('required')">Please input your password!</ng-container>
+                  <ng-container *ngIf="control.hasError('minlength')">Password must be at least 6 characters.</ng-container>
+                  <ng-container *ngIf="control.hasError('strongPassword')">Must contain uppercase, lowercase, number & special char.</ng-container>
+                </ng-template>
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -79,7 +89,9 @@
               <nz-form-label nzRequired>Study Year</nz-form-label>
               <nz-form-control nzErrorTip="Select year!">
                 <nz-select formControlName="studyYear" nzPlaceHolder="Select">
-                  <nz-option *ngFor="let year of studyYears" [nzValue]="year" [nzLabel]="year"></nz-option>
+                  @for (year of studyYears; track year) {
+                    <nz-option [nzValue]="year" [nzLabel]="year"></nz-option>
+                  }
                 </nz-select>
               </nz-form-control>
             </nz-form-item>

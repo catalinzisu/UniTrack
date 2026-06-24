@@ -32,7 +32,9 @@
           <nz-form-label nzRequired>Faculty</nz-form-label>
           <nz-form-control nzErrorTip="Please select a faculty!">
             <nz-select formControlName="faculty" nzPlaceHolder="Select Faculty">
-              <nz-option *ngFor="let f of faculties" [nzValue]="f" [nzLabel]="f"></nz-option>
+              @for (f of faculties; track f) {
+                <nz-option [nzValue]="f" [nzLabel]="f"></nz-option>
+              }
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -55,7 +57,9 @@
       <nz-form-label nzRequired>Study Year</nz-form-label>
       <nz-form-control nzErrorTip="Please select study year!">
         <nz-select formControlName="studyYear" nzPlaceHolder="Select Study Year">
-          <nz-option *ngFor="let y of studyYears" [nzValue]="y" [nzLabel]="y"></nz-option>
+          @for (y of studyYears; track y) {
+            <nz-option [nzValue]="y" [nzLabel]="y"></nz-option>
+          }
         </nz-select>
       </nz-form-control>
     </nz-form-item>
