@@ -199,6 +199,88 @@
       "professorRating": 0,
       "examRating": 0,
       "id": 1782369262043
+    },
+    {
+      "name": "Dezvoltare aplicatii web",
+      "professor": "Dr. Gabriela",
+      "examDate": "2026-06-25",
+      "materials": [
+        {
+          "name": "Curs1",
+          "url": "https://docs.google.com/spreadsheets/d/1hPhjaAR2dgxZsG0GKprx7p9pMbJGfr3R-Co5oDQhawA/edit?gid=1942492373#gid=1942492373"
+        }
+      ],
+      "faculty": "FMI",
+      "specialization": "Informatica Aplicata",
+      "studyYear": "1",
+      "professorRating": 0,
+      "examRating": 0,
+      "id": 1782366181226
+    },
+    {
+      "name": "Inteligenta Artificiala",
+      "professor": "Dr. Sasu Lucian",
+      "examDate": "2026-06-04",
+      "materials": [
+        {
+          "name": "Curs1",
+          "url": "https://docs.google.com/spreadsheets/d/1Iwj3j1eH0Nd4Wf4YXNeTW9MXZIeS-6YkTpGUy1WwRy8/edit?usp=sharing"
+        }
+      ],
+      "faculty": "FMI",
+      "specialization": "Informatica Aplicata",
+      "studyYear": "1",
+      "professorRating": 0,
+      "examRating": 0,
+      "id": 1782366351314,
+      "globalComments": [
+        {
+          "username": "Vlad Alex",
+          "text": "salut! stiti cumva daca intra si capitolul de fuzzy artmap la examen?",
+          "date": "2026-06-25T05:46:45.212Z"
+        }
+      ]
+    },
+    {
+      "name": "dezvoltare aplicatii web",
+      "professor": "Dr. Gabriela",
+      "examDate": "2026-06-25",
+      "materials": [
+        {
+          "name": "curs1",
+          "url": "https://docs.google.com/spreadsheets/d/1hPhjaAR2dgxZsG0GKprx7p9pMbJGfr3R-Co5oDQhawA/edit?gid=1942492373#gid=1942492373"
+        }
+      ],
+      "faculty": "FMI",
+      "specialization": "Informatica Aplicata",
+      "studyYear": "1",
+      "professorRating": 0,
+      "examRating": 0,
+      "id": 1782367844523
+    },
+    {
+      "name": "Fiziologie",
+      "professor": "Dr. Popescu",
+      "examDate": "2026-06-10",
+      "materials": [
+        {
+          "name": "curs1",
+          "url": "https://docs.google.com/spreadsheets/d/1heQUNf0Kw8vxruqiPqOuf56EQCXj9LlgdnBllkY5oW4/edit?usp=sharing"
+        }
+      ],
+      "faculty": "Medicina",
+      "specialization": "Stomatologie",
+      "studyYear": "2",
+      "professorRating": 0,
+      "examRating": 0,
+      "id": 1782368811990,
+      "globalComments": [
+        {
+          "username": "balan maria",
+          "text": "buna ziua!intra capitolul 11 la examen?",
+          "date": "2026-06-25T06:27:19.091Z"
+        }
+      ]
     }
   ],
   "users": [
@@ -678,6 +760,113 @@
       ]
     },
     {
+      "id": "ioan.vlad@student.unitbv.ro",
+      "subjects": [
+        {
+          "name": "Dezvoltare aplicatii web",
+          "professor": "Dr. Gabriela",
+          "examDate": "2026-06-25",
+          "materials": [
+            {
+              "name": "Curs1",
+              "url": "https://docs.google.com/spreadsheets/d/1hPhjaAR2dgxZsG0GKprx7p9pMbJGfr3R-Co5oDQhawA/edit?gid=1942492373#gid=1942492373"
+            }
+          ],
+          "faculty": "FMI",
+          "specialization": "Informatica Aplicata",
+          "studyYear": "1",
+          "professorRating": 0,
+          "examRating": 0,
+          "id": 1782366181226
+        },
+        {
+          "name": "Inteligenta Artificiala",
+          "professor": "Dr. Sasu Lucian",
+          "examDate": "2026-06-04",
+          "materials": [
+            {
+              "name": "Curs1",
+              "url": "https://docs.google.com/spreadsheets/d/1Iwj3j1eH0Nd4Wf4YXNeTW9MXZIeS-6YkTpGUy1WwRy8/edit?usp=sharing"
+            }
+          ],
+          "faculty": "FMI",
+          "specialization": "Informatica Aplicata",
+          "studyYear": "1",
+          "professorRating": 5,
+          "examRating": 5,
+          "id": 1782366351314
+        }
+      ]
+    },
+    {
+      "id": "alex.vlad@student.unitbv.ro",
+      "subjects": [
+        {
+          "name": "dezvoltare aplicatii web",
+          "professor": "Dr. Gabriela",
+          "examDate": "2026-06-25",
+          "materials": [
+            {
+              "name": "curs1",
+              "url": "https://docs.google.com/spreadsheets/d/1hPhjaAR2dgxZsG0GKprx7p9pMbJGfr3R-Co5oDQhawA/edit?gid=1942492373#gid=1942492373"
+            }
+          ],
+          "faculty": "FMI",
+          "specialization": "Informatica Aplicata",
+          "studyYear": "1",
+          "professorRating": 0,
+          "examRating": 0,
+          "id": 1782367844523
+        },
+        {
+          "name": "Inteligenta Artificiala",
+          "professor": "Dr. Sasu Lucian",
+          "examDate": "2026-06-04",
+          "materials": [
+            {
+              "name": "Curs1",
+              "url": "https://docs.google.com/spreadsheets/d/1Iwj3j1eH0Nd4Wf4YXNeTW9MXZIeS-6YkTpGUy1WwRy8/edit?usp=sharing"
+            }
+          ],
+          "faculty": "FMI",
+          "specialization": "Informatica Aplicata",
+          "studyYear": "1",
+          "professorRating": 5,
+          "examRating": 4,
+          "id": 1782366351314,
+          "globalComments": [
+            {
+              "username": "Vlad Alex",
+              "text": "salut! stiti cumva daca intra si capitolul de fuzzy artmap la examen?",
+              "date": "2026-06-25T05:46:45.212Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mariabalan27@student.unitbv.ro",
+      "subjects": [
+        {
+          "name": "Fiziologie",
+          "professor": "Dr. Popescu",
+          "examDate": "2026-06-10",
+          "materials": [
+            {
+              "name": "curs1",
+              "url": "https://docs.google.com/spreadsheets/d/1heQUNf0Kw8vxruqiPqOuf56EQCXj9LlgdnBllkY5oW4/edit?usp=sharing"
+            }
+          ],
+          "faculty": "Medicina",
+          "specialization": "Stomatologie",
+          "studyYear": "2",
+          "professorRating": 3,
+          "examRating": 4,
+          "id": 1782368811990
+        }
+      ]
+    },
+    {
       "email": "cf1@student.unitbv.ro",
       "password": "Parola12.",
       "firstName": "cf1",
@@ -733,4 +922,4 @@
       ]
     }
   ]
-}
+}
