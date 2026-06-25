@@ -618,6 +618,64 @@
       "faculty": "FMI",
       "specialization": "Informatica",
       "studyYear": "3"
+    },
+    {
+      "id": "cf@student.unitbv.ro",
+      "subjects": [
+        {
+          "id": 2,
+          "name": "Baze de Date",
+          "professor": "Dr. Maria Ionescu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "2",
+          "professorRating": 5,
+          "examRating": 4,
+          "examDate": "2026-06-20",
+          "materials": [],
+          "globalComments": [
+            {
+              "username": "Catalin Zisu",
+              "text": "e greu trebuie invatat din timp spor !",
+              "date": "2026-06-23T19:00:18.409Z"
+            },
+            {
+              "username": "c z",
+              "text": "mersi o sa ma apuc",
+              "date": "2026-06-23T19:01:08.537Z"
+            },
+            {
+              "username": "Cz cz",
+              "text": "mersi o sa ma apuc si eu",
+              "date": "2026-06-23T19:02:23.642Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "email": "cf1@student.unitbv.ro",
+      "password": "Parola12.",
+      "firstName": "cf1",
+      "lastName": "cf1",
+      "faculty": "FMI",
+      "specialization": "Informatica",
+      "studyYear": "1",
+      "id": "cf1@student.unitbv.ro",
+      "subjects": [
+        {
+          "id": 1,
+          "name": "Programare Orientată pe Obiecte",
+          "professor": "Dr. Ion Popescu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "1",
+          "professorRating": 4,
+          "examRating": 3,
+          "examDate": "2026-06-15",
+          "materials": []
+        }
+      ]
     }
   ]
 }

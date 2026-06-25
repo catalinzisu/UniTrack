@@ -38,8 +38,7 @@ export class SubjectService {
   }
 
   saveUserSubjects(email: string, subjects: Subject[]): Observable<any> {
-    return this.http.put(`${this.apiUrl}/users/${encodeURIComponent(email)}`, {
-      id: email,
+    return this.http.patch(`${this.apiUrl}/users/${encodeURIComponent(email)}`, {
       subjects: subjects
     }).pipe(
       catchError(err => {
