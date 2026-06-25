@@ -1,13 +1,13 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, delay, of, catchError, timer, switchMap, throwError } from 'rxjs';
+import { Observable, tap, switchMap, throwError, map, of } from 'rxjs';
 import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://reqres.in/api/login';
+  private apiUrl = 'http://localhost:3000/users';
   
   public currentUser: WritableSignal<User | null> = signal(null);
 
@@ -27,45 +27,35 @@ export class AuthService {
     }
   }
 
-  // Get the array of registered users
-  private getRegisteredUsers(): any[] {
-    try {
-      const usersStr = localStorage.getItem('registered_users');
-      return usersStr ? JSON.parse(usersStr) : [];
-    } catch(e) {
-      return [];
-    }
-  }
-
   register(userData: any): Observable<any> {
-    return timer(800).pipe(
-      switchMap(() => {
-        const users = this.getRegisteredUsers();
+    const userToCreate = {
+      ...userData,
+      id: userData.email, // Folosim email-ul ca ID pentru a fi compatibil cu db.json existent
+      subjects: []
+    };
+
+    return this.http.get<any[]>(`${this.apiUrl}?id=${userData.email}`).pipe(
+      switchMap((users) => {
         // Verificăm dacă email-ul există deja
-        if (users.find(u => u.email === userData.email)) {
+        if (users.length > 0) {
           return throwError(() => new Error('Acest email este deja înregistrat!'));
         }
-        users.push(userData);
-        localStorage.setItem('registered_users', JSON.stringify(users));
-        return of({ success: true });
+        return this.http.post(this.apiUrl, userToCreate).pipe(
+          map(() => ({ success: true }))
+        );
       })
     );
   }
 
   login(credentials: { email: string; password?: string; remember?: boolean }): Observable<any> {
-    // Facem un request HTTP real către Fake API
-    return this.http.post(this.apiUrl, { email: credentials.email, password: credentials.password || 'password' }).pipe(
-      // ReqRes va da eroare 400 dacă user-ul nu e "eve.holt@reqres.in". 
-      // Noi prindem eroarea și simulăm un succes local ca să nu stricăm fluxul aplicației (pentru datele custom ale studenților)
-      catchError(() => of({ token: 'mock_token_fallback' }).pipe(delay(400))),
-      tap((response: any) => {
-        const users = this.getRegisteredUsers();
-        const foundUser = users.find(u => u.email === credentials.email);
-        
-        if (!foundUser) {
+    return this.http.get<any[]>(`${this.apiUrl}?id=${credentials.email}`).pipe(
+      tap((users) => {
+        if (users.length === 0) {
           throw new Error('Contul nu există. Te rugăm să te înregistrezi mai întâi.');
         }
-
+        
+        const foundUser = users[0];
+        
         if (foundUser.password !== credentials.password) {
           throw new Error('Parolă incorectă!');
         }
@@ -81,7 +71,7 @@ export class AuthService {
         };
 
         this.currentUser.set(activeUser);
-        const token = response.token || 'mock_token_' + Date.now();
+        const token = 'mock_token_' + Date.now();
         const userStr = JSON.stringify(activeUser);
 
         if (credentials.remember) {
@@ -91,28 +81,20 @@ export class AuthService {
           sessionStorage.setItem('auth_token', token);
           sessionStorage.setItem('active_user_session', userStr);
         }
-      })
+      }),
+      map(() => ({ token: 'mock_token_' + Date.now() }))
     );
   }
 
   updateProfile(updatedUser: User): Observable<any> {
-    return timer(500).pipe(
+    return this.http.patch(`${this.apiUrl}/${encodeURIComponent(updatedUser.email)}`, updatedUser).pipe(
       tap(() => {
-        const users = this.getRegisteredUsers();
-        const index = users.findIndex((u: any) => u.email === updatedUser.email);
-        if (index > -1) {
-          users[index] = { ...users[index], ...updatedUser };
-          localStorage.setItem('registered_users', JSON.stringify(users));
-          
-          this.currentUser.set(updatedUser);
-          
-          if (localStorage.getItem('active_user_session')) {
-            localStorage.setItem('active_user_session', JSON.stringify(updatedUser));
-          } else if (sessionStorage.getItem('active_user_session')) {
-            sessionStorage.setItem('active_user_session', JSON.stringify(updatedUser));
-          }
-        } else {
-          throw new Error('User not found');
+        this.currentUser.set(updatedUser);
+        
+        if (localStorage.getItem('active_user_session')) {
+          localStorage.setItem('active_user_session', JSON.stringify(updatedUser));
+        } else if (sessionStorage.getItem('active_user_session')) {
+          sessionStorage.setItem('active_user_session', JSON.stringify(updatedUser));
         }
       })
     );
