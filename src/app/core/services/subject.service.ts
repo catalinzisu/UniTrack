@@ -27,6 +27,10 @@ export class SubjectService {
     return this.http.put<Subject>(`${this.apiUrl}/globalSubjects/${subject.id}`, subject);
   }
 
+  deleteGlobalSubject(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/globalSubjects/${id}`);
+  }
+
   getUserSubjects(email: string): Observable<Subject[] | null> {
     return this.http.get<{id: string, subjects: Subject[]}>(`${this.apiUrl}/users/${encodeURIComponent(email)}`).pipe(
       map(user => user.subjects),
@@ -53,10 +57,12 @@ export class SubjectService {
     );
   }
 
-  deleteUserSubjects(email: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/users/${encodeURIComponent(email)}`).pipe(
+  resetUserSubjects(email: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/users/${encodeURIComponent(email)}`, {
+      subjects: []
+    }).pipe(
       catchError(err => {
-        if (err.status === 404) return of(null); // Ignore if already not found
+        if (err.status === 404) return of(null);
         return throwError(() => err);
       })
     );

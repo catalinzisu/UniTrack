@@ -10,7 +10,19 @@
       "professorRating": 4,
       "examRating": 3,
       "examDate": "2026-06-15",
-      "materials": []
+      "materials": [],
+      "globalComments": [
+        {
+          "username": "cf1 cf1",
+          "text": "ceva",
+          "date": "2026-06-25T06:40:05.348Z"
+        },
+        {
+          "username": "cf2 cf2",
+          "text": "cfcf",
+          "date": "2026-06-25T06:40:42.018Z"
+        }
+      ]
     },
     {
       "id": 2,
@@ -175,6 +187,18 @@
       "professorRating": 0,
       "examRating": 0,
       "id": 1782239123335
+    },
+    {
+      "name": "cv",
+      "professor": "cv",
+      "examDate": "1111-11-11",
+      "materials": [],
+      "faculty": "FMI",
+      "specialization": "Informatica",
+      "studyYear": "1",
+      "professorRating": 0,
+      "examRating": 0,
+      "id": 1782369262043
     }
   ],
   "users": [
@@ -674,6 +698,37 @@
           "examRating": 3,
           "examDate": "2026-06-15",
           "materials": []
+        }
+      ]
+    },
+    {
+      "email": "cf2@student.unitbv.ro",
+      "password": "Parola12.",
+      "firstName": "cf2",
+      "lastName": "cf2",
+      "faculty": "FMI",
+      "specialization": "Informatica",
+      "studyYear": "1",
+      "id": "cf2@student.unitbv.ro",
+      "subjects": [
+        {
+          "id": 1,
+          "name": "Programare Orientată pe Obiecte",
+          "professor": "Dr. Ion Popescu",
+          "faculty": "FMI",
+          "specialization": "Informatica",
+          "studyYear": "1",
+          "professorRating": 4,
+          "examRating": 3,
+          "examDate": "2026-06-15",
+          "materials": [],
+          "globalComments": [
+            {
+              "username": "cf1 cf1",
+              "text": "ceva",
+              "date": "2026-06-25T06:40:05.348Z"
+            }
+          ]
         }
       ]
     }

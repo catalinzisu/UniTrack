@@ -86,7 +86,7 @@ export class ProfileComponent implements OnInit {
           this.isLoading = false;
           
           if (oldFaculty && oldFaculty !== updatedData.faculty) {
-            this.subjectService.deleteUserSubjects(updatedData.email).subscribe();
+            this.subjectService.resetUserSubjects(updatedData.email).subscribe();
           }
 
           this.msg.success('Profil actualizat cu succes!');
